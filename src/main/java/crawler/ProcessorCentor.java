@@ -1,0 +1,104 @@
+package crawler;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.stereotype.Component;
+
+import crawler.model.TestModel;
+import crawler.pipeline.MysqlPipeLine;
+import us.codecraft.webmagic.Page;
+import us.codecraft.webmagic.ResultItems;
+import us.codecraft.webmagic.Site;
+import us.codecraft.webmagic.Spider;
+import us.codecraft.webmagic.processor.PageProcessor;
+
+/**
+ * 
+ */
+
+/**
+ *************************
+ * 
+ ************************* 
+ * @author kootain
+ * @creation 2016��6��13��
+ *
+ */
+@Component
+public class ProcessorCentor implements PageProcessor {
+	@Qualifier("JobInfoDaoPipeline")
+	private static String CLASS_BASE = "crawler.processor.";
+	
+	private static String METHOD_NAME = "processor";
+	
+    private Site site = Site.me()//.setHttpProxy(new HttpHost("127.0.0.1",8888))
+            .setRetryTimes(3).setSleepTime(1000).setUseGzip(true);
+    
+    private static void crawel(){
+    	Spider spider = Spider.create(new ProcessorCentor())
+    						  .addPipeline(new MysqlPipeLine())
+    						  .thread(2);
+        String urlTemplate = "http://baike.baidu.com/search/word?word=%s&pic=1&sug=1&enc=utf8";
+        ResultItems resultItems = spider.<ResultItems>get(String.format(urlTemplate, "水力发电"));
+        System.out.println(resultItems);
+        spider.close();
+    }
+
+    public static void main(String[] args) {
+    	ProcessorCentor.crawel();
+    }
+    
+    @Override
+    public void process(Page page) {
+    	String webtype = processorName(page);
+    	try {
+    		Class<?> clazz = Class.forName(webtype);
+    		Class<?>[] argsType = new Class[1];
+    		Object[] args = new Object[1];
+    		argsType[0] = page.getClass();
+    		args[0] = page;
+    		Method method = clazz.getMethod(METHOD_NAME, argsType);
+    		method.invoke(null, args);
+    	} catch (ClassNotFoundException e) {
+    		e.printStackTrace();
+    	} catch (NoSuchMethodException e) {
+			e.printStackTrace();
+		} catch (SecurityException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+		}
+    	TestModel item = new TestModel();
+    	item.setName(page.getResultItems().get("name"));
+    	item.setDescription(page.getResultItems().get("description").toString());
+    	page.putField("itemObject", item);
+
+       System.out.println();
+    }
+
+    @Override
+    public Site getSite() {
+        return site;
+    }
+    
+    /**
+     * Return the processor class name with package name,
+     * for reflect the processor class
+     * @param page
+     * @return
+     */
+    private static String processorName(Page page){
+    	String type = page.getUrl().regex("http\\w?://\\S+\\.(\\S+)\\.com").toString();
+    	if(type!=null && !"".equals(type)){
+    		type = type.substring(0,1).toUpperCase() + type.toLowerCase().substring(1);
+    	}
+    	return CLASS_BASE+type+"Processor";
+    }
+}

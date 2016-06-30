@@ -3,6 +3,9 @@
  */
 package crawler.processor;
 
+import java.util.Date;
+
+import crawler.model.News;
 import us.codecraft.webmagic.Page;
 
 /**
@@ -10,12 +13,19 @@ import us.codecraft.webmagic.Page;
  * 
  ************************* 
  * @author kootain
- * @creation 2016Äê6ÔÂ13ÈÕ
+ * @creation 2016ï¿½ï¿½6ï¿½ï¿½13ï¿½ï¿½
  *
  */
 public class BaiduProcessor {
 	public static void processor(Page page){
-   	 	page.putField("name", page.getHtml().css("h1","text").toString());
-        page.putField("description", page.getHtml().xpath("//div[@class='lemma-summary']/div[@class='para']/allText()"));
+//   	 page.putField("name", page.getHtml().css("h1","text").toString());
+//        page.putField("description", page.getHtml().xpath("//div[@class='lemma-summary']/div[@class='para']/allText()"));
+	//mock data
+		page.putField("title","æµ‹è¯•title");
+		page.putField("subtitle","æµ‹è¯•subtitle");
+		page.putField("content","æµ‹è¯•content");
+		page.putField("resource","æµ‹è¯•resource");
+		page.putField("link",page.getUrl().toString());
+		page.putField("newsTime", new Date());
 	}
 }

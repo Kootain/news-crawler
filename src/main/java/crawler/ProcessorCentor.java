@@ -1,13 +1,14 @@
 package crawler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Component;
 
-import crawler.model.TestModel;
+import crawler.model.News;
 import crawler.pipeline.MysqlPipeLine;
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.ResultItems;
@@ -75,10 +76,8 @@ public class ProcessorCentor implements PageProcessor {
 		} catch (InvocationTargetException e) {
 			e.printStackTrace();
 		}
-    	TestModel item = new TestModel();
-    	item.setName(page.getResultItems().get("name"));
-    	item.setDescription(page.getResultItems().get("description").toString());
-    	page.putField("itemObject", item);
+    	News news = pageTONews(page);
+    	page.putField("itemObject", news);
 
        System.out.println();
     }
@@ -100,5 +99,18 @@ public class ProcessorCentor implements PageProcessor {
     		type = type.substring(0,1).toUpperCase() + type.toLowerCase().substring(1);
     	}
     	return CLASS_BASE+type+"Processor";
+    }
+    
+    private static News pageTONews(Page page){
+    	News news = new News();
+    	news.setTitle(page.getResultItems().get("title"));
+    	news.setSubtitle(page.getResultItems().get("subtitle"));
+    	news.setContent(page.getResultItems().get("content"));
+    	news.setResource(page.getResultItems().get("resource"));
+    	news.setLink(page.getResultItems().get("link"));
+    	news.setNewsTime(page.getResultItems().get("newsTime"));
+    	news.setCreateTime(new Date());
+    	news.setIshidden(false);
+    	return news;
     }
 }

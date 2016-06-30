@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="crawler.dao.NewsDao">
+
+	<resultMap type="News" id ="newsresult">
+		<id column="id" property="id" />
+		<result column="title" property="title" />
+		<result column="subtitle" property="subtitle" />
+		<result column="content" property="content" />
+		<result column="resource" property="resource" />
+		<result column="link" property="link" />
+		<result column="newsTime" property="newsTime" />
+		<result column="createTime" property="createTime" />
+		<result column="ishidden" property="ishidden" />
+	</resultMap>
+	
+	<select id="selectall" parameterType="News" resultMap="newsresult">
+		select * from `news`
+	</select>
+    
+    <insert id="addNews" parameterType="News" 
+        useGeneratedKeys="true" keyProperty="id"> 
+        INSERT INTO `news` (title,subtitle,content,resource,link,newsTime,createTime,ishidden)
+        VALUES (#{title}, #{subtitle}, #{content}, #{resource}, #{link}, #{newsTime}, #{createTime}, #{ishidden}); 
+    </insert>
+</mapper>

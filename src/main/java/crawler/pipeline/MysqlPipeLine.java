@@ -4,13 +4,6 @@
 package crawler.pipeline;
 
 import javax.annotation.Resource;
-
-
-
-
-
-
-
 import junit.framework.Test;
 
 import org.springframework.context.ApplicationContext;
@@ -20,8 +13,8 @@ import org.springframework.stereotype.Component;
 import us.codecraft.webmagic.ResultItems;
 import us.codecraft.webmagic.Task;
 import us.codecraft.webmagic.pipeline.Pipeline;
-import crawler.dao.TestDao;
-import crawler.model.TestModel;
+import crawler.dao.NewsDao;
+import crawler.model.News;
 
 
 /**
@@ -38,10 +31,10 @@ public class MysqlPipeLine implements Pipeline{
 	static{  
 		ctx = new ClassPathXmlApplicationContext("config/applicationContext.xml");  
 	}        
-	private TestDao mapper = (TestDao)ctx.getBean("userMapper");
+	private NewsDao mapper = (NewsDao)ctx.getBean("newsMapper");
 	
 	@Override
 	public void process(ResultItems resultItems, Task task) {
-		mapper.addUser((TestModel)resultItems.get("itemObject"));
+		mapper.addNews((News)resultItems.get("itemObject"));
 	}
 }

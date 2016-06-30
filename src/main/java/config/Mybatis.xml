@@ -4,7 +4,7 @@
 <configuration>
     <typeAliases> 
         <typeAlias alias="Test" type="crawler.model.TestModel"/> 
-        <typeAlias alias="User" type="crawler.model.User"/> 
+        <typeAlias alias="News" type="crawler.model.News"/> 
     </typeAliases> 
 
     <environments default="development">
@@ -21,6 +21,6 @@
 
     <mappers>
         <mapper resource="crawler/model/TestModel.xml"/>
-        <mapper resource="crawler/model/User.xml"/>
+        <mapper resource="crawler/model/News.xml"/>
     </mappers>
 </configuration>

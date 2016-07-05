@@ -3,7 +3,6 @@
 "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
     <typeAliases> 
-        <typeAlias alias="Test" type="crawler.model.TestModel"/> 
         <typeAlias alias="News" type="crawler.model.News"/> 
     </typeAliases> 
 
@@ -20,7 +19,6 @@
     </environments>
 
     <mappers>
-        <mapper resource="crawler/model/TestModel.xml"/>
         <mapper resource="crawler/model/News.xml"/>
     </mappers>
 </configuration>

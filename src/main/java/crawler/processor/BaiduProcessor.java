@@ -4,8 +4,6 @@
 package crawler.processor;
 
 import java.util.Date;
-
-import crawler.model.News;
 import us.codecraft.webmagic.Page;
 
 /**

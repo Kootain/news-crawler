@@ -3,12 +3,11 @@
  */
 package crawler.pipeline;
 
-import javax.annotation.Resource;
-import junit.framework.Test;
-
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Component;
+
+import com.mysql.jdbc.exceptions.MySQLDataException;
 
 import us.codecraft.webmagic.ResultItems;
 import us.codecraft.webmagic.Task;
@@ -35,6 +34,14 @@ public class MysqlPipeLine implements Pipeline{
 	
 	@Override
 	public void process(ResultItems resultItems, Task task) {
-		mapper.addNews((News)resultItems.get("itemObject"));
+		News news = (News)resultItems.get("itemObject");
+		System.out.println(news.getId());
+		try {
+			mapper.addNews(news);
+		} catch (MySQLDataException e) {
+			// TODO Auto-generated catch block
+			System.err.println("重复数据");
+		}
+		System.out.println(news.getId());
 	}
 }

@@ -16,15 +16,6 @@ import us.codecraft.webmagic.pipeline.Pipeline;
 import crawler.dao.NewsDao;
 import crawler.model.News;
 
-
-/**
- *************************
- * 
- ************************* 
- * @author kootain
- * @creation 2016��6��13��
- *
- */
 @Component("JobInfoDaoPipeline")
 public class MysqlPipeLine implements Pipeline{
 	private static ApplicationContext ctx;  

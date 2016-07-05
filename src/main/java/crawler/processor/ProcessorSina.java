@@ -37,11 +37,12 @@ public class ProcessorSina {
 			Matcher m = timePattern.matcher(timeString);
 			SimpleDateFormat sdf =   new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			Date newsTime = new Date();
-			try {
-				newsTime = sdf.parse(m.group(1)+"-"+m.group(2)+"-"+m.group(3)+" "+m.group(4)+":"+m.group(5)+":00");
-			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			if(m.find()){
+				try {
+					newsTime = sdf.parse(m.group(1)+"-"+m.group(2)+"-"+m.group(3)+" "+m.group(4)+":"+m.group(5)+":00");
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
 			}
 			page.putField("newsTime", newsTime);
 	}

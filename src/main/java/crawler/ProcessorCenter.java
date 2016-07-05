@@ -33,7 +33,8 @@ public class ProcessorCenter implements PageProcessor {
 //        String urlTemplate = "http://baike.baidu.com/search/word?word=%s&pic=1&sug=1&enc=utf8";
 //        ResultItems resultItems = spider.<ResultItems>get(String.format(urlTemplate, "水力发电"));
     	ResultItems resultItems=spider.<ResultItems>get("http://news.sina.com.cn/c/2016-07-04/doc-ifxtscen3329067.shtml");
-        System.out.println(resultItems);
+    	resultItems=spider.<ResultItems>get("http://gov.163.com/16/0704/10/BR4ELCHH00234L7P.html");
+    	System.out.println(resultItems);
         spider.close();
     }
 

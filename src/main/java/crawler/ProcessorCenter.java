@@ -6,6 +6,7 @@ import java.util.Date;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
+
 import crawler.model.News;
 import crawler.pipeline.MysqlPipeLine;
 import us.codecraft.webmagic.Page;
@@ -14,20 +15,9 @@ import us.codecraft.webmagic.Site;
 import us.codecraft.webmagic.Spider;
 import us.codecraft.webmagic.processor.PageProcessor;
 
-/**
- * 
- */
 
-/**
- *************************
- * 
- ************************* 
- * @author kootain
- * @creation 2016��6��13��
- *
- */
 @Component
-public class ProcessorCentor implements PageProcessor {
+public class ProcessorCenter implements PageProcessor {
 	@Qualifier("JobInfoDaoPipeline")
 	private static String CLASS_BASE = "crawler.processor.";
 	
@@ -37,7 +27,7 @@ public class ProcessorCentor implements PageProcessor {
             .setRetryTimes(3).setSleepTime(1000).setUseGzip(true);
     
     private static void crawel(){
-    	Spider spider = Spider.create(new ProcessorCentor())
+    	Spider spider = Spider.create(new ProcessorCenter())
     						  .addPipeline(new MysqlPipeLine())
     						  .thread(2);
         String urlTemplate = "http://baike.baidu.com/search/word?word=%s&pic=1&sug=1&enc=utf8";
@@ -47,7 +37,7 @@ public class ProcessorCentor implements PageProcessor {
     }
 
     public static void main(String[] args) {
-    	ProcessorCentor.crawel();
+    	ProcessorCenter.crawel();
     }
     
     @Override

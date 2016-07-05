@@ -5,6 +5,7 @@ package crawler.pipeline;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Component;
 
 import com.mysql.jdbc.exceptions.MySQLDataException;
@@ -33,14 +34,15 @@ public class MysqlPipeLine implements Pipeline{
 	private NewsDao mapper = (NewsDao)ctx.getBean("newsMapper");
 	
 	@Override
-	public void process(ResultItems resultItems, Task task) {
+	public void process(ResultItems resultItems, Task task){
 		News news = (News)resultItems.get("itemObject");
 		System.out.println(news.getId());
 		try {
 			mapper.addNews(news);
-		} catch (MySQLDataException e) {
-			// TODO Auto-generated catch block
+		} catch (DuplicateKeyException e) {
 			System.err.println("重复数据");
+		} catch (MySQLDataException e) {
+			e.printStackTrace();
 		}
 		System.out.println(news.getId());
 	}

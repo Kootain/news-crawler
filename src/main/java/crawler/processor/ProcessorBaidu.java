@@ -15,7 +15,7 @@ import us.codecraft.webmagic.Page;
  * @creation 2016��6��13��
  *
  */
-public class BaiduProcessor {
+public class ProcessorBaidu {
 	public static void processor(Page page){
 //   	 page.putField("name", page.getHtml().css("h1","text").toString());
         page.putField("content", page.getHtml().xpath("//div[@class='lemma-summary']/div[@class='para']/allText()").toString());

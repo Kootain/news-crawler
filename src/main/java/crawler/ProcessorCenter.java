@@ -30,9 +30,9 @@ public class ProcessorCenter implements PageProcessor {
     	Spider spider = Spider.create(new ProcessorCenter())
     						  .addPipeline(new MysqlPipeLine())
     						  .thread(2);
-        String urlTemplate = "http://baike.baidu.com/search/word?word=%s&pic=1&sug=1&enc=utf8";
-        ResultItems resultItems = spider.<ResultItems>get(String.format(urlTemplate, "水力发电"));
-        resultItems=spider.<ResultItems>get("http://news.sina.com.cn/c/2016-07-04/doc-ifxtscen3329067.shtml");
+//        String urlTemplate = "http://baike.baidu.com/search/word?word=%s&pic=1&sug=1&enc=utf8";
+//        ResultItems resultItems = spider.<ResultItems>get(String.format(urlTemplate, "水力发电"));
+    	ResultItems resultItems=spider.<ResultItems>get("http://news.sina.com.cn/c/2016-07-04/doc-ifxtscen3329067.shtml");
         System.out.println(resultItems);
         spider.close();
     }
@@ -48,7 +48,6 @@ public class ProcessorCenter implements PageProcessor {
     		Class<?> clazz = Class.forName(webtype);
     		Class<?>[] argsType = new Class[1];
     		Object[] args = new Object[1];
-    		page.putField("source", webtype);
     		argsType[0] = page.getClass();
     		args[0] = page;
     		Method method = clazz.getMethod(METHOD_NAME, argsType);
@@ -88,7 +87,8 @@ public class ProcessorCenter implements PageProcessor {
     	if(type!=null && !"".equals(type)){
     		type = type.substring(0,1).toUpperCase() + type.toLowerCase().substring(1);
     	}
-    	return CLASS_BASE+type+"Processor";
+    	page.putField("resource", type);
+    	return CLASS_BASE+"Processor"+type;
     }
     
     private static News pageTONews(Page page){

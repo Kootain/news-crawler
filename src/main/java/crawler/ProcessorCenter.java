@@ -91,10 +91,8 @@ public class ProcessorCenter implements PageProcessor {
 		} catch (InvocationTargetException e) {
 			e.printStackTrace();
 		}
-    	News news = pageTONews(page);
-    	page.putField("itemObject", news);
-    	
-       System.out.println();
+//    	News news = pageTONews(page);
+//    	page.putField("itemObject", news);
     }
 
     @Override
@@ -119,19 +117,6 @@ public class ProcessorCenter implements PageProcessor {
     
     private static String processorName(String type){
     	return CLASS_BASE+"Processor"+type;
-    }
-    
-    private News pageTONews(Page page){
-    	News news = new News();
-    	news.setTitle(page.getResultItems().get("title").toString());
-    	news.setSubtitle(page.getResultItems().get("subtitle").toString());
-    	news.setContent(page.getResultItems().get("content").toString());
-    	news.setResource(page.getResultItems().get("resource").toString());
-    	news.setLink(page.getResultItems().get("link").toString());
-    	news.setNewsTime((Date)page.getResultItems().get("newsTime"));
-    	news.setCreateTime(new Date());
-    	news.setIshidden(false);
-    	return news;
     }
     
 }

@@ -3,6 +3,8 @@
  */
 package crawler.pipeline;
 
+import java.util.Date;
+
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.dao.DuplicateKeyException;
@@ -10,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 import com.mysql.jdbc.exceptions.MySQLDataException;
 
+import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.ResultItems;
 import us.codecraft.webmagic.Task;
 import us.codecraft.webmagic.pipeline.Pipeline;
@@ -26,7 +29,8 @@ public class MysqlPipeLine implements Pipeline{
 	
 	@Override
 	public void process(ResultItems resultItems, Task task){
-		News news = (News)resultItems.get("itemObject");
+//		News news = (News)resultItems.get("itemObject");
+		News news = genNews(resultItems);
 		System.out.println(news.getId());
 		try {
 			mapper.addNews(news);
@@ -37,4 +41,17 @@ public class MysqlPipeLine implements Pipeline{
 		}
 		System.out.println(news.getId());
 	}
+	
+	private News genNews(ResultItems resultItems){
+    	News news = new News();
+    	news.setTitle(resultItems.get("title").toString());
+    	news.setSubtitle(resultItems.get("subtitle").toString());
+    	news.setContent(resultItems.get("content").toString());
+    	news.setResource(resultItems.get("resource").toString());
+    	news.setLink(resultItems.get("link").toString());
+    	news.setNewsTime((Date)resultItems.get("newsTime"));
+    	news.setCreateTime(new Date());
+    	news.setIshidden(false);
+    	return news;
+    }
 }

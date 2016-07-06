@@ -11,6 +11,8 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 
 import us.codecraft.webmagic.Page;
+import us.codecraft.webmagic.ResultItems;
+import us.codecraft.webmagic.Spider;
 
 public class Processor163 {
 	public static void processor(Page page){
@@ -33,5 +35,14 @@ public class Processor163 {
 		page.putField("content",content);
 		page.putField("link",page.getUrl().toString());
 		page.putField("newsTime", newsDatetime);
+	}
+	
+	public static void init(Spider spider){
+		String[] initUrls = {
+				"http://gov.163.com/16/0704/10/BR4ELCHH00234L7P.html"
+				};
+		for(String url:initUrls){
+			spider.<ResultItems>get(url);
+		}
 	}
 }

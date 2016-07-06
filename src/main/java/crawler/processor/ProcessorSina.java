@@ -49,21 +49,15 @@ public class ProcessorSina {
 			}
 		}
 		page.putField("newsTime", newsTime);
-		List<Tags> tags = new ArrayList<Tags>();
-		Tags tmpTags = new Tags();
-		tmpTags.setTagName("测试父tag");
-		tmpTags.setTagType(0);
-		tmpTags.setParentTag(0);
+		
+		List<Tags> tags = new ArrayList<Tags>();	//tags存放所有标签
+		Tags tmpTags = new Tags("测试父tag",0);		//父标签第二个参数0
 		tags.add(tmpTags);
 		
-		tmpTags = new Tags();
-		tmpTags.setTagName("测试子tag");
-		tmpTags.setTagType(1);
+		tmpTags = new Tags("测试子tag",1);				//子标签第二个参数1
 		tags.add(tmpTags);
 		
-		tmpTags = new Tags();
-		tmpTags.setTagName("测试关键字");
-		tmpTags.setTagType(-1);
+		tmpTags = new Tags("测试关键字",-1);			//关键字类标签第二个参数 -1
 		tags.add(tmpTags);
 		
 		page.putField("tags", tags);

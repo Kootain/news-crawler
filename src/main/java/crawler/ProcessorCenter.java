@@ -7,6 +7,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 
+
+
+
 import crawler.model.News;
 import crawler.pipeline.MysqlPipeLine;
 import us.codecraft.webmagic.Page;
@@ -21,7 +24,11 @@ public class ProcessorCenter implements PageProcessor {
 	@Qualifier("JobInfoDaoPipeline")
 	private static String CLASS_BASE = "crawler.processor.";
 	
-	private static String METHOD_NAME = "processor";
+	private static String PROCESSOR_METHOD_NAME = "processor";
+	
+	private static String INIT_METHOD_NAME = "init";
+	
+	private static String[] SOURCE_LIST = {"Sina","163"};
 	
     private Site site = Site.me()//.setHttpProxy(new HttpHost("127.0.0.1",8888))
             .setRetryTimes(3).setSleepTime(1000).setUseGzip(true);
@@ -30,11 +37,30 @@ public class ProcessorCenter implements PageProcessor {
     	Spider spider = Spider.create(new ProcessorCenter())
     						  .addPipeline(new MysqlPipeLine())
     						  .thread(2);
-//        String urlTemplate = "http://baike.baidu.com/search/word?word=%s&pic=1&sug=1&enc=utf8";
-//        ResultItems resultItems = spider.<ResultItems>get(String.format(urlTemplate, "水力发电"));
-    	ResultItems resultItems=spider.<ResultItems>get("http://news.sina.com.cn/c/2016-07-04/doc-ifxtscen3329067.shtml");
-    	resultItems=spider.<ResultItems>get("http://gov.163.com/16/0704/10/BR4ELCHH00234L7P.html");
-    	System.out.println(resultItems);
+
+        for(String source:SOURCE_LIST){
+        	try {
+				Class<?> clazz = Class.forName(processorName(source));
+				Class<?>[] argsType = new Class[1];
+				Object[] args = new Object[1];
+	    		argsType[0] = spider.getClass();
+	    		args[0] = spider;
+	    		Method method = clazz.getMethod(INIT_METHOD_NAME, argsType);
+	    		method.invoke(null, args);
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			} catch (NoSuchMethodException e) {
+				e.printStackTrace();
+			} catch (SecurityException e) {
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			} catch (IllegalArgumentException e) {
+				e.printStackTrace();
+			} catch (InvocationTargetException e) {
+				e.printStackTrace();
+			}
+        }
         spider.close();
     }
 
@@ -51,7 +77,7 @@ public class ProcessorCenter implements PageProcessor {
     		Object[] args = new Object[1];
     		argsType[0] = page.getClass();
     		args[0] = page;
-    		Method method = clazz.getMethod(METHOD_NAME, argsType);
+    		Method method = clazz.getMethod(PROCESSOR_METHOD_NAME, argsType);
     		method.invoke(null, args);
     	} catch (ClassNotFoundException e) {
     		e.printStackTrace();
@@ -83,7 +109,7 @@ public class ProcessorCenter implements PageProcessor {
      * @param page
      * @return
      */
-    private static String processorName(Page page){
+    private String processorName(Page page){
     	String type = page.getUrl().regex("http\\w?://\\S+\\.(\\S+)\\.com").toString();
     	if(type!=null && !"".equals(type)){
     		type = type.substring(0,1).toUpperCase() + type.toLowerCase().substring(1);
@@ -92,7 +118,11 @@ public class ProcessorCenter implements PageProcessor {
     	return CLASS_BASE+"Processor"+type;
     }
     
-    private static News pageTONews(Page page){
+    private static String processorName(String type){
+    	return CLASS_BASE+"Processor"+type;
+    }
+    
+    private News pageTONews(Page page){
     	News news = new News();
     	news.setTitle(page.getResultItems().get("title").toString());
     	news.setSubtitle(page.getResultItems().get("subtitle").toString());
@@ -104,4 +134,5 @@ public class ProcessorCenter implements PageProcessor {
     	news.setIshidden(false);
     	return news;
     }
+    
 }

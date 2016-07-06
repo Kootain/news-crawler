@@ -4,6 +4,7 @@
 package crawler.model;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  *************************
@@ -32,6 +33,8 @@ public class News {
 	private Date createTime;	//记录创建时间
 	
 	private boolean ishidden;	//是否展示标志位
+	
+	private List<Tags> tags;	//新闻Tag
 
 	/**
 	 * @return the id
@@ -157,6 +160,20 @@ public class News {
 	 */
 	public void setIshidden(boolean ishidden) {
 		this.ishidden = ishidden;
+	}
+
+	/**
+	 * @return the tags
+	 */
+	public List<Tags> getTags() {
+		return tags;
+	}
+
+	/**
+	 * @param tags the tags to set
+	 */
+	public void setTags(List<Tags> tags) {
+		this.tags = tags;
 	}
 	
 }

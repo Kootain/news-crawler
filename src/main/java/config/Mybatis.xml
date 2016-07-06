@@ -4,6 +4,7 @@
 <configuration>
     <typeAliases> 
         <typeAlias alias="News" type="crawler.model.News"/> 
+        <typeAlias alias="Tags" type="crawler.model.Tags"/>
     </typeAliases> 
 
     <environments default="development">

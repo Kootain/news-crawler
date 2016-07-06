@@ -14,10 +14,19 @@
 		<result column="newsTime" property="newsTime" />
 		<result column="createTime" property="createTime" />
 		<result column="ishidden" property="ishidden" />
+		<collection resultMap="tagresult" property="tags"/>
+	</resultMap>
+	
+	<resultMap type="Tags" id="tagsresult">
+		<id column="tid" property="tid" />
+		<result column="tagName" property="tagName" />
+		<result column="parentTag" property="parentTag" />
+		<result column="catelogId" property="catelogId" />
+		<result column="catelogName" property="catelogName" />
 	</resultMap>
 	
 	<select id="selectall" parameterType="News" resultMap="newsresult">
-		select * from `news`
+		select * from `news` n left join news_tag nt on n.id = nt.newsId left join tag t on nt.tagId = t.tid left join catelog c on c.cid = t.catelogId
 	</select>
     
     <insert id="addNews" parameterType="News" 

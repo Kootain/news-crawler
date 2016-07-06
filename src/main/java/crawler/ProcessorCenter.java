@@ -13,8 +13,7 @@ import org.springframework.stereotype.Component;
 import crawler.model.News;
 import crawler.pipeline.MysqlPipeLine;
 import us.codecraft.webmagic.Page;
-import us.codecraft.webmagic.ResultItems;
-import us.codecraft.webmagic.Site;
+	import us.codecraft.webmagic.Site;
 import us.codecraft.webmagic.Spider;
 import us.codecraft.webmagic.processor.PageProcessor;
 

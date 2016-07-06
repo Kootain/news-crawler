@@ -94,12 +94,12 @@ public class ProcessorCenter implements PageProcessor {
     
     private static News pageTONews(Page page){
     	News news = new News();
-    	news.setTitle(page.getResultItems().get("title"));
-    	news.setSubtitle(page.getResultItems().get("subtitle"));
-    	news.setContent(page.getResultItems().get("content"));
-    	news.setResource(page.getResultItems().get("resource"));
-    	news.setLink(page.getResultItems().get("link"));
-    	news.setNewsTime(page.getResultItems().get("newsTime"));
+    	news.setTitle(page.getResultItems().get("title").toString());
+    	news.setSubtitle(page.getResultItems().get("subtitle").toString());
+    	news.setContent(page.getResultItems().get("content").toString());
+    	news.setResource(page.getResultItems().get("resource").toString());
+    	news.setLink(page.getResultItems().get("link").toString());
+    	news.setNewsTime((Date)page.getResultItems().get("newsTime"));
     	news.setCreateTime(new Date());
     	news.setIshidden(false);
     	return news;

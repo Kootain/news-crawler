@@ -14,7 +14,7 @@
 		<result column="newsTime" property="newsTime" />
 		<result column="createTime" property="createTime" />
 		<result column="ishidden" property="ishidden" />
-		<collection resultMap="tagresult" property="tags"/>
+		<collection resultMap="tagsresult" property="tags"/>
 	</resultMap>
 	
 	<resultMap type="Tags" id="tagsresult">
@@ -25,13 +25,28 @@
 		<result column="catelogName" property="catelogName" />
 	</resultMap>
 	
-	<select id="selectall" parameterType="News" resultMap="newsresult">
+	<select id="selectall" resultMap="newsresult">
 		select * from `news` n left join news_tag nt on n.id = nt.newsId left join tag t on nt.tagId = t.tid left join catelog c on c.cid = t.catelogId
+	</select>
+	
+	<select id="findTag" resultMap="tagsresult" parameterType="String">
+		select * from tag where tagName = #{tagName} limit 1;
 	</select>
     
     <insert id="addNews" parameterType="News" 
         useGeneratedKeys="true" keyProperty="id"> 
         INSERT INTO `news` (title,subtitle,content,resource,link,newsTime,createTime,ishidden)
         VALUES (#{title}, #{subtitle}, #{content}, #{resource}, #{link}, #{newsTime}, #{createTime}, #{ishidden}); 
+    </insert>
+    
+    <insert id="addTags" parameterType="Tags"
+    	useGeneratedKeys="true" keyProperty="tid">
+    	insert into `tag` (tagName,parentTag,catelogId)
+    	values (#{tagName},#{parentTag},#{catelogId});
+    </insert>
+    
+    <insert id="addT2N" parameterType="Map">
+    	insert into `news_tag` (newsId,tagId)
+    	values (#{nid},#{tid});
     </insert>
 </mapper>

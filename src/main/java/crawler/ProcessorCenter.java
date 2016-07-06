@@ -1,7 +1,6 @@
 package crawler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -10,10 +9,10 @@ import org.springframework.stereotype.Component;
 
 
 
-import crawler.model.News;
+
 import crawler.pipeline.MysqlPipeLine;
 import us.codecraft.webmagic.Page;
-	import us.codecraft.webmagic.Site;
+import us.codecraft.webmagic.Site;
 import us.codecraft.webmagic.Spider;
 import us.codecraft.webmagic.processor.PageProcessor;
 

@@ -5,6 +5,7 @@ package crawler.processor;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -14,6 +15,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 
+import crawler.model.Tags;
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.ResultItems;
 import us.codecraft.webmagic.Spider;
@@ -47,6 +49,24 @@ public class ProcessorSina {
 			}
 		}
 		page.putField("newsTime", newsTime);
+		List<Tags> tags = new ArrayList<Tags>();
+		Tags tmpTags = new Tags();
+		tmpTags.setTagName("测试父tag");
+		tmpTags.setTagType(0);
+		tmpTags.setParentTag(0);
+		tags.add(tmpTags);
+		
+		tmpTags = new Tags();
+		tmpTags.setTagName("测试子tag");
+		tmpTags.setTagType(1);
+		tags.add(tmpTags);
+		
+		tmpTags = new Tags();
+		tmpTags.setTagName("测试关键字");
+		tmpTags.setTagType(-1);
+		tags.add(tmpTags);
+		
+		page.putField("tags", tags);
 	}
 	
 	public static void init(Spider spider){

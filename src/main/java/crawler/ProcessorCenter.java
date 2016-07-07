@@ -22,7 +22,7 @@ public class ProcessorCenter implements PageProcessor {
 	
 	private static String INIT_METHOD_NAME = "init";
 	
-	private static String[] SOURCE_LIST = {"Sina"};
+	private static String[] SOURCE_LIST = {"163"};
 	
     public Site site = Site.me()//.setHttpProxy(new HttpHost("127.0.0.1",8888))
             .setRetryTimes(3).setSleepTime(1000).setUseGzip(true);

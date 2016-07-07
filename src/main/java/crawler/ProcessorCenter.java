@@ -5,15 +5,7 @@ import java.lang.reflect.Method;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
-
-
-
-
-
-
-
 import crawler.pipeline.MysqlPipeLine;
-import crawler.scheduler.LevelLimitScheduler;
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Site;
 import us.codecraft.webmagic.Spider;
@@ -37,9 +29,8 @@ public class ProcessorCenter implements PageProcessor {
     
     private static void crawel(){
     	Spider spider = Spider.create(new ProcessorCenter())
-//    						  .addPipeline(new MysqlPipeLine())
+    						  .addPipeline(new MysqlPipeLine())
     						  .addPipeline(new ConsolePipeline())
-    						  .setScheduler(new LevelLimitScheduler(3))
     						  .thread(5);
     	
 

@@ -10,31 +10,38 @@ import org.springframework.stereotype.Component;
 
 
 
+
+
 import crawler.pipeline.MysqlPipeLine;
+import crawler.scheduler.LevelLimitScheduler;
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Site;
 import us.codecraft.webmagic.Spider;
+import us.codecraft.webmagic.pipeline.ConsolePipeline;
 import us.codecraft.webmagic.processor.PageProcessor;
 
 
 @Component
 public class ProcessorCenter implements PageProcessor {
-	@Qualifier("JobInfoDaoPipeline")
+
 	private static String CLASS_BASE = "crawler.processor.";
 	
 	private static String PROCESSOR_METHOD_NAME = "processor";
 	
 	private static String INIT_METHOD_NAME = "init";
 	
-	private static String[] SOURCE_LIST = {"Sina","163"};
+	private static String[] SOURCE_LIST = {"Sina"};
 	
     private Site site = Site.me()//.setHttpProxy(new HttpHost("127.0.0.1",8888))
             .setRetryTimes(3).setSleepTime(1000).setUseGzip(true);
     
     private static void crawel(){
     	Spider spider = Spider.create(new ProcessorCenter())
-    						  .addPipeline(new MysqlPipeLine())
-    						  .thread(2);
+//    						  .addPipeline(new MysqlPipeLine())
+    						  .addPipeline(new ConsolePipeline())
+    						  .setScheduler(new LevelLimitScheduler(3))
+    						  .thread(5);
+    	
 
         for(String source:SOURCE_LIST){
         	try {
@@ -59,6 +66,7 @@ public class ProcessorCenter implements PageProcessor {
 				e.printStackTrace();
 			}
         }
+        spider.run();
         spider.close();
     }
 
@@ -90,8 +98,6 @@ public class ProcessorCenter implements PageProcessor {
 		} catch (InvocationTargetException e) {
 			e.printStackTrace();
 		}
-//    	News news = pageTONews(page);
-//    	page.putField("itemObject", news);
     }
 
     @Override

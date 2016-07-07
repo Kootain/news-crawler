@@ -23,6 +23,15 @@ public class Tags {
 	private String catelogName;	//对应catelog名称
 	
 	private int tagType;	//插入标记,0为一级目录,1为其它级目录,-1位关键字
+	
+	public Tags(){
+		
+	}
+	
+	public Tags(String tagName, int tagType){
+		this.tagName = tagName;
+		this.tagType = tagType;
+	}
 
 
 

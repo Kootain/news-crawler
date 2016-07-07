@@ -6,7 +6,6 @@ package crawler.processor;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -22,8 +21,10 @@ import org.apache.commons.lang3.StringUtils;
 
 
 
+
 import crawler.model.Tags;
 import us.codecraft.webmagic.Page;
+import us.codecraft.webmagic.Request;
 import us.codecraft.webmagic.Spider;
 import us.codecraft.webmagic.selector.JsonPathSelector;
 
@@ -36,11 +37,12 @@ public class Processor163 {
 				page.addTargetRequests(new JsonPathSelector("$[*].l").selectList(links));
 			}
 		}
+		else{
 
 		
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 		String strTime = sdf.format(new Date());
-		strTime = strTime.substring(0,9);
+		strTime = strTime.substring(0,10);
 		strTime = strTime + " 00:00:00";
 		Date today = new Date();
 		try {
@@ -56,12 +58,15 @@ public class Processor163 {
 			Pattern timePattern = Pattern.compile("http://\\w+.163.com/(\\d+)/(\\d{2})(\\d{2})/(\\d+)/\\w+");
 			Matcher m = timePattern.matcher(newsTime);
 			if(m.find()){
-				newsDateTime = sdf.parse(m.group(1)+"-"+m.group(2)+"-"+m.group(3)+" "+m.group(4)+":00:00");
+				try {
+					newsDateTime = sdf.parse("20"+m.group(1)+"-"+m.group(2)+"-"+m.group(3)+" "+m.group(4)+":00:00");
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		}
 		
-		
-
 		if(page.getUrl().toString().contains(".html")&&newsDateTime.after(today)){
 			String title = page.getHtml().xpath("//h1/text()").toString();
 			List<String> subContent = page.getHtml().xpath("//div[@class='post_text']/p/text()").all();
@@ -97,6 +102,7 @@ public class Processor163 {
 			page.putField("tags", tags);
 		}
 	}
+}
 	
 	public static void init(Spider spider){
 			spider.addUrl(INIT_URL);

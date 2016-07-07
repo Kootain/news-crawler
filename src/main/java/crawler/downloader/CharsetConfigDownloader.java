@@ -83,6 +83,9 @@ public class CharsetConfigDownloader extends HttpClientDownloader {
             httpResponse = getHttpClient(site).execute(httpUriRequest);
             statusCode = httpResponse.getStatusLine().getStatusCode();
             request.putExtra(Request.STATUS_CODE, statusCode);
+            if(request.getExtra("_charset")!=null){
+            	charset = request.getExtra("_charset").toString();
+            }
             if (statusAccept(acceptStatCode, statusCode)) {
                 Page page = handleResponse(request, charset, httpResponse, task);
                 onSuccess(request);

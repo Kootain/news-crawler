@@ -2,9 +2,9 @@ package crawler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
+import crawler.downloader.CharsetConfigDownloader;
 import crawler.pipeline.MysqlPipeLine;
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Site;
@@ -24,13 +24,14 @@ public class ProcessorCenter implements PageProcessor {
 	
 	private static String[] SOURCE_LIST = {"Sina"};
 	
-    private Site site = Site.me()//.setHttpProxy(new HttpHost("127.0.0.1",8888))
+    public Site site = Site.me()//.setHttpProxy(new HttpHost("127.0.0.1",8888))
             .setRetryTimes(3).setSleepTime(1000).setUseGzip(true);
     
-    private static void crawel(){
+    private void crawel(){
     	Spider spider = Spider.create(new ProcessorCenter())
     						  .addPipeline(new MysqlPipeLine())
     						  .addPipeline(new ConsolePipeline())
+    						  .setDownloader(new CharsetConfigDownloader())
     						  .thread(5);
     	
 
@@ -62,7 +63,8 @@ public class ProcessorCenter implements PageProcessor {
     }
 
     public static void main(String[] args) {
-    	ProcessorCenter.crawel();
+    	ProcessorCenter pc = new ProcessorCenter();
+    	pc.crawel();
     }
     
     @Override

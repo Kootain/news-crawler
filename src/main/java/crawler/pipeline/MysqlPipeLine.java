@@ -15,7 +15,6 @@ import org.springframework.stereotype.Component;
 
 import com.mysql.jdbc.exceptions.MySQLDataException;
 
-import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.ResultItems;
 import us.codecraft.webmagic.Task;
 import us.codecraft.webmagic.pipeline.Pipeline;

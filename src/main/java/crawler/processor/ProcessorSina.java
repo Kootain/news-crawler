@@ -3,29 +3,20 @@
  */
 package crawler.processor;
 
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
+
 import java.util.Date;
 import java.util.List;
 
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import javax.xml.crypto.Data;
 
-import org.apache.commons.lang3.StringUtils;
-
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.parser.Feature;
-
-import crawler.model.News;
 import crawler.model.Tags;
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Request;
-import us.codecraft.webmagic.ResultItems;
 import us.codecraft.webmagic.Spider;
 import us.codecraft.webmagic.selector.JsonPathSelector;
 
@@ -45,7 +36,6 @@ public class ProcessorSina {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		String strDate  = sdf.format(new Date());
 		String reg = "http://\\w+\\.sina\\.com\\.cn/(\\w+/)+"+strDate+"/doc-\\w+.shtml";
-		
 		if(page.getUrl().toString().equals(INIT_URL)){
 			initProcessor(page);
 		}else if(page.getUrl().regex(reg).match()){
@@ -56,51 +46,48 @@ public class ProcessorSina {
 	}
 	
 	public static void init(Spider spider){
-		spider.addUrl(INIT_URL);
+//		spider.addUrl(INIT_URL);
+		spider.addRequest(new Request(INIT_URL).putExtra("_charset", "gb2312"));
 	}
 	
 	public static void initProcessor(Page page){
 		List<String> links = new JsonPathSelector("$.list[*].url").selectList(page.getRawText().substring(page.getRawText().indexOf("{")));
-		page.addTargetRequests(links);
+		List<String> tags = new JsonPathSelector("$.list[*].channel.title").selectList(page.getRawText().substring(page.getRawText().indexOf("{")));
+		List<String> titles = new JsonPathSelector("$.list[*].title").selectList(page.getRawText().substring(page.getRawText().indexOf("{")));
+		List<String> times = new JsonPathSelector("$.list[*].time").selectList(page.getRawText().substring(page.getRawText().indexOf("{")));
+		for(int i=0;i<links.size();i++){
+			page.addTargetRequest(new Request(links.get(i)).putExtra("title", titles.get(i)).putExtra("tag", tags.get(i)).putExtra("time", times.get(i)));
+		}
 	}
 	
 	
 	private static void contentProcessor(Page page){
-		page.putField("title",page.getHtml().xpath("//h1/text()").toString());
+//		page.putField("title",page.getHtml().xpath("//h1/text()").toString());
+		page.putField("title",page.getRequest().getExtra("title").toString());
 		page.putField("subtitle","");
-		List<String> tmp = page.getHtml().css(".page-content .article").xpath("//p/text()").all();
-		String content = StringUtils.join(tmp,"<br/>");
-		page.putField("content",content);
-		if(content.trim().equals("")){
-			page.setSkip(true);
-		}
+		page.putField("content",page.getHtml().smartContent());
 		page.putField("link",page.getUrl().toString());
-		String timeString = page.getHtml().css(".time-source").xpath("//span/text()").toString();
+		
+		SimpleDateFormat format =  new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		String d = format.format(Long.parseLong((String) page.getRequest().getExtra("time")+"000")); 
 		Date newsTime = new Date();
-		if(timeString!=null){
-			Pattern timePattern = Pattern.compile("(\\d+)年(\\d+)月(\\d+)日(\\d+):(\\d+)");
-			Matcher m = timePattern.matcher(timeString);
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			if(m.find()){
-				try {
-					newsTime = sdf.parse(m.group(1)+"-"+m.group(2)+"-"+m.group(3)+" "+m.group(4)+":"+m.group(5)+":00");
-				} catch (ParseException e) {
-					e.printStackTrace();
-				}
-			}
-		}
+		try {
+			newsTime = format.parse(d);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}  
 		page.putField("newsTime", newsTime);
 		
 		List<Tags> tags = new ArrayList<Tags>();	//tags存放所有标签
 //		String[] tmptag = page.getHtml().css(".path").xpath("/text()").toString().trim().split(">");
-		Tags tmpTags = new Tags("测试父tag",0);		//父标签第二个参数0
+		Tags tmpTags = new Tags(page.getRequest().getExtra("tag").toString(),0);		//父标签第二个参数0
 		tags.add(tmpTags);
 		
-		tmpTags = new Tags("测试子tag",1);				//子标签第二个参数1
-		tags.add(tmpTags);
-		
-		tmpTags = new Tags("测试关键字",-1);			//关键字类标签第二个参数 -1
-		tags.add(tmpTags);
+//		tmpTags = new Tags("测试子tag",1);				//子标签第二个参数1
+//		tags.add(tmpTags);
+//		tmpTags = new Tags("测试关键字",-1);			//关键字类标签第二个参数 -1
+//		tags.add(tmpTags);
 		page.putField("tags", tags);
 	}
 }

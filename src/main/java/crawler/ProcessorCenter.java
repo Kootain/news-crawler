@@ -24,9 +24,31 @@ public class ProcessorCenter implements PageProcessor {
 	
 	private static String INIT_METHOD_NAME = "init";
 	
-	private static String[] SOURCE_LIST = {"163"};
+	private static String[] SOURCE_LIST = {"Qq"};
 	
 	private Map<String, Object> processorInstance= new HashMap<String, Object>();
+	
+	ProcessorCenter(){
+		for(String source:SOURCE_LIST){
+			Class<?> clazz;
+			try {
+				clazz = Class.forName(processorName(source));
+				this.processorInstance.put(source, clazz.newInstance());
+				System.err.println(source);
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (InstantiationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		}
+   
+	}
 	
     public Site site = Site.me()//.setHttpProxy(new HttpHost("127.0.0.1",8888))
             .setRetryTimes(3).setSleepTime(1000).setUseGzip(true);
@@ -80,6 +102,7 @@ public class ProcessorCenter implements PageProcessor {
     @Override
     public void process(Page page) {
     	String webtype = getSourceFromPage(page);
+    	page.putField("resource", webtype);
     	try {
     		Class<?> clazz = processorInstance.get(webtype).getClass();
     		Class<?>[] argsType = new Class[1];
@@ -98,8 +121,6 @@ public class ProcessorCenter implements PageProcessor {
 			e.printStackTrace();
 		} catch (InvocationTargetException e) {
 			e.printStackTrace();
-		}finally{
-			page.setSkip(true);
 		}
     }
 

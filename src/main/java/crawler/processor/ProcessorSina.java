@@ -28,11 +28,11 @@ import us.codecraft.webmagic.selector.JsonPathSelector;
  * @creation 2016年7月5日
  *
  */
-public class ProcessorSina {
+public class ProcessorSina implements Processor{
 	
 	private static String INIT_URL = "http://roll.news.sina.com.cn/interface/rollnews_ch_out_interface.php?col=89&offset_num=0&num=3000&page=1";
 	
-	public static void processor(Page page){
+	public void processor(Page page){
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		String strDate  = sdf.format(new Date());
 		String reg = "http://\\w+\\.sina\\.com\\.cn/(\\w+/)+"+strDate+"/doc-\\w+.shtml";
@@ -45,12 +45,12 @@ public class ProcessorSina {
 		}
 	}
 	
-	public static void init(Spider spider){
+	public void init(Spider spider){
 //		spider.addUrl(INIT_URL);
 		spider.addRequest(new Request(INIT_URL).putExtra("_charset", "gb2312"));
 	}
 	
-	public static void initProcessor(Page page){
+	public void initProcessor(Page page){
 		List<String> links = new JsonPathSelector("$.list[*].url").selectList(page.getRawText().substring(page.getRawText().indexOf("{")));
 		List<String> tags = new JsonPathSelector("$.list[*].channel.title").selectList(page.getRawText().substring(page.getRawText().indexOf("{")));
 		List<String> titles = new JsonPathSelector("$.list[*].title").selectList(page.getRawText().substring(page.getRawText().indexOf("{")));
@@ -61,8 +61,7 @@ public class ProcessorSina {
 	}
 	
 	
-	private static void contentProcessor(Page page){
-//		page.putField("title",page.getHtml().xpath("//h1/text()").toString());
+	private void contentProcessor(Page page){
 		page.putField("title",page.getRequest().getExtra("title").toString());
 		page.putField("subtitle","");
 		page.putField("content",page.getHtml().smartContent());
@@ -82,8 +81,7 @@ public class ProcessorSina {
 		List<Tags> tags = new ArrayList<Tags>();	//tags存放所有标签
 //		String[] tmptag = page.getHtml().css(".path").xpath("/text()").toString().trim().split(">");
 		Tags tmpTags = new Tags(page.getRequest().getExtra("tag").toString(),0);		//父标签第二个参数0
-		tags.add(tmpTags);
-		
+		tags.add(tmpTags);	
 //		tmpTags = new Tags("测试子tag",1);				//子标签第二个参数1
 //		tags.add(tmpTags);
 //		tmpTags = new Tags("测试关键字",-1);			//关键字类标签第二个参数 -1

@@ -79,13 +79,16 @@ public class CharsetConfigDownloader extends HttpClientDownloader {
         CloseableHttpResponse httpResponse = null;
         int statusCode=0;
         try {
+        	if(request.getExtra("_charset")!=null){
+            	charset = request.getExtra("_charset").toString();
+            }
+        	if(request.getExtra("_referer")!=null){
+            	headers.put("Referer",request.getExtra("_referer").toString());
+            }
             HttpUriRequest httpUriRequest = getHttpUriRequest(request, site, headers);
             httpResponse = getHttpClient(site).execute(httpUriRequest);
             statusCode = httpResponse.getStatusLine().getStatusCode();
             request.putExtra(Request.STATUS_CODE, statusCode);
-            if(request.getExtra("_charset")!=null){
-            	charset = request.getExtra("_charset").toString();
-            }
             if (statusAccept(acceptStatCode, statusCode)) {
                 Page page = handleResponse(request, charset, httpResponse, task);
                 onSuccess(request);

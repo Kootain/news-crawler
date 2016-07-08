@@ -1,6 +1,8 @@
 package crawler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.stereotype.Component;
 
@@ -24,6 +26,8 @@ public class ProcessorCenter implements PageProcessor {
 	
 	private static String[] SOURCE_LIST = {"163"};
 	
+	private Map<String, Object> processorInstance= new HashMap<String, Object>();
+	
     public Site site = Site.me()//.setHttpProxy(new HttpHost("127.0.0.1",8888))
             .setRetryTimes(3).setSleepTime(1000).setUseGzip(true);
     
@@ -38,12 +42,13 @@ public class ProcessorCenter implements PageProcessor {
         for(String source:SOURCE_LIST){
         	try {
 				Class<?> clazz = Class.forName(processorName(source));
+				processorInstance.put(source, clazz.newInstance());
 				Class<?>[] argsType = new Class[1];
 				Object[] args = new Object[1];
 	    		argsType[0] = spider.getClass();
 	    		args[0] = spider;
 	    		Method method = clazz.getMethod(INIT_METHOD_NAME, argsType);
-	    		method.invoke(null, args);
+	    		method.invoke(processorInstance.get(source), args);
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 			} catch (NoSuchMethodException e) {
@@ -56,6 +61,11 @@ public class ProcessorCenter implements PageProcessor {
 				e.printStackTrace();
 			} catch (InvocationTargetException e) {
 				e.printStackTrace();
+			} catch (InstantiationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} finally{
+				
 			}
         }
         spider.run();
@@ -69,17 +79,15 @@ public class ProcessorCenter implements PageProcessor {
     
     @Override
     public void process(Page page) {
-    	String webtype = processorName(page);
+    	String webtype = getSourceFromPage(page);
     	try {
-    		Class<?> clazz = Class.forName(webtype);
+    		Class<?> clazz = processorInstance.get(webtype).getClass();
     		Class<?>[] argsType = new Class[1];
     		Object[] args = new Object[1];
     		argsType[0] = page.getClass();
     		args[0] = page;
     		Method method = clazz.getMethod(PROCESSOR_METHOD_NAME, argsType);
-    		method.invoke(null, args);
-    	} catch (ClassNotFoundException e) {
-    		e.printStackTrace();
+    		method.invoke(processorInstance.get(webtype), args);
     	} catch (NoSuchMethodException e) {
 			e.printStackTrace();
 		} catch (SecurityException e) {
@@ -90,12 +98,22 @@ public class ProcessorCenter implements PageProcessor {
 			e.printStackTrace();
 		} catch (InvocationTargetException e) {
 			e.printStackTrace();
+		}finally{
+			page.setSkip(true);
 		}
     }
 
     @Override
     public Site getSite() {
         return site;
+    }
+    
+    private String getSourceFromPage(Page page){
+    	String type = page.getUrl().regex("http\\w?://\\S+\\.(\\S+)\\.com").toString();
+    	if(type!=null && !"".equals(type)){
+    		type = type.substring(0,1).toUpperCase() + type.toLowerCase().substring(1);
+    	}
+    	return type;
     }
     
     /**
@@ -105,15 +123,13 @@ public class ProcessorCenter implements PageProcessor {
      * @return
      */
     private String processorName(Page page){
-    	String type = page.getUrl().regex("http\\w?://\\S+\\.(\\S+)\\.com").toString();
-    	if(type!=null && !"".equals(type)){
-    		type = type.substring(0,1).toUpperCase() + type.toLowerCase().substring(1);
-    	}
+    	String type = getSourceFromPage(page);
     	page.putField("resource", type);
     	return CLASS_BASE+"Processor"+type;
     }
     
-    private static String processorName(String type){
+    
+    private String processorName(String type){
     	return CLASS_BASE+"Processor"+type;
     }
     

@@ -30,17 +30,27 @@ import us.codecraft.webmagic.selector.JsonPathSelector;
 
 public class Processor163 {
 	private static String INIT_URL = "http://news.163.com/special/0001220O/news_json.js";
+	static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+	
 	public static void processor(Page page){
-		if(page.getUrl().toString().equals(INIT_URL)){
-			List<String> linkList = new JsonPathSelector("$.news[*]").selectList(page.getRawText().substring(page.getRawText().indexOf("{")));
-			for(String links : linkList){
-				page.addTargetRequests(new JsonPathSelector("$[*].l").selectList(links));
-			}
-		}
-		else{
-
-		
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+		if(page.getUrl().toString().equals(INIT_URL))
+			initProcessor(page);
+		if(timeJudgement(page))
+			contentProcessor(page);
+	}
+	
+	public static void init(Spider spider){
+		spider.addUrl(INIT_URL);
+}
+	
+	private static void initProcessor(Page page) {
+		List<String> linkList = new JsonPathSelector("$.news[*]").selectList(page.getRawText().substring(page.getRawText().indexOf("{")));
+		for(String links : linkList){
+			page.addTargetRequests(new JsonPathSelector("$[*].l").selectList(links));
+		}	
+	}
+	
+	private static boolean timeJudgement(Page page){
 		String strTime = sdf.format(new Date());
 		strTime = strTime.substring(0,10);
 		strTime = strTime + " 00:00:00";
@@ -66,45 +76,48 @@ public class Processor163 {
 				}
 			}
 		}
-		
-		if(page.getUrl().toString().contains(".html")&&newsDateTime.after(today)){
-			String title = page.getHtml().xpath("//h1/text()").toString();
-			List<String> subContent = page.getHtml().xpath("//div[@class='post_text']/p/text()").all();
-			String content = "";
-			content = StringUtils.join(subContent.toArray(),"<br/>");
-			String pulishTime = page.getHtml().xpath("//div[@class='post_time_source']/text()").toString();
-			pulishTime = pulishTime.trim().substring(0,19);
-			SimpleDateFormat timeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			Date newsDatetime = new Date();
-			try {
-				newsDatetime = timeFormat.parse(pulishTime);
-			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-			List<Tags> tags = new ArrayList<Tags>();	//tags存放所有标签
-			Tags tmpTags = new Tags("测试父tag",0);		//父标签第二个参数0
-			tags.add(tmpTags);
-			
-			tmpTags = new Tags("测试子tag",1);				//子标签第二个参数1
-			tags.add(tmpTags);
-			
-			tmpTags = new Tags("测试关键字",-1);			//关键字类标签第二个参数 -1
-			tags.add(tmpTags);
-			
-			
-			page.putField("title",title);
-			page.putField("subtitle","");
-			page.putField("content",content);
-			page.putField("link",page.getUrl().toString());
-			page.putField("newsTime", newsDatetime);
-			page.putField("tags", tags);
-		}
+		if(newsDateTime.after(today)) 
+			return true;
+		else 
+			return false;
 	}
-}
 	
-	public static void init(Spider spider){
-			spider.addUrl(INIT_URL);
+	private static void contentProcessor(Page page) {
+		String title = page.getHtml().xpath("//h1/text()").toString();
+		List<String> subContent = page.getHtml().xpath("//div[@class='post_text']/p/text()").all();
+		String content = "";
+		content = StringUtils.join(subContent.toArray(),"<br/>");
+		String pulishTime = page.getHtml().xpath("//div[@class='post_time_source']/text()").toString();
+		pulishTime = pulishTime.trim().substring(0,19);
+		SimpleDateFormat timeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		Date newsDatetime = new Date();
+		try {
+			newsDatetime = timeFormat.parse(pulishTime);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+			
+		List<Tags> tags = new ArrayList<Tags>();	//tags存放所有标签
+		Tags tmpTags = new Tags("测试父tag",0);		//父标签第二个参数0
+		tags.add(tmpTags);
+			
+		tmpTags = new Tags("测试子tag",1);				//子标签第二个参数1
+		tags.add(tmpTags);
+			
+		tmpTags = new Tags("测试关键字",-1);			//关键字类标签第二个参数 -1
+		tags.add(tmpTags);
+			
+			
+		page.putField("title",title);
+		page.putField("subtitle","");
+		page.putField("content",content);
+		page.putField("link",page.getUrl().toString());
+		page.putField("newsTime", newsDatetime);
+		page.putField("tags", tags);		
 	}
+
+	
+
+
 }

@@ -26,7 +26,7 @@ public class ProcessorCenter implements PageProcessor {
 	
 	private static String[] SOURCE_LIST = {	
 											"Qq",
-//											"163",
+											"163",
 											"Sina",
 											};
 	

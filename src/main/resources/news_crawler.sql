@@ -1,16 +1,16 @@
 /*
 Navicat MySQL Data Transfer
 
-Source Server         : local
-Source Server Version : 50621
+Source Server         : Chen
+Source Server Version : 50505
 Source Host           : localhost:3306
 Source Database       : news_crawler
 
 Target Server Type    : MYSQL
-Target Server Version : 50621
+Target Server Version : 50505
 File Encoding         : 65001
 
-Date: 2016-07-06 21:21:57
+Date: 2016-07-12 14:34:10
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -66,5 +66,6 @@ CREATE TABLE `tag` (
   `tagName` varchar(20) NOT NULL COMMENT '标签名称',
   `parentTag` int(11) DEFAULT NULL COMMENT '父标签ID',
   `catelogId` int(11) DEFAULT NULL COMMENT '标签所属的分类ID，链接与表catelog',
-  PRIMARY KEY (`tid`)
-) ENGINE=InnoDB AUTO_INCREMENT=35 DEFAULT CHARSET=utf8;
+  PRIMARY KEY (`tid`),
+  UNIQUE KEY `tagName` (`tagName`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;

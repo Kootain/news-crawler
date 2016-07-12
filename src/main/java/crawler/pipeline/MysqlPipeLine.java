@@ -36,12 +36,12 @@ public class MysqlPipeLine implements Pipeline{
 		News news = genNews(resultItems);
 		List<Tags> tags = resultItems.get("tags");
 		int parentId = 0;
-		
+		Tags tmpTags = null;
 		try {
 			mapper.addNews(news);
 			if(null!=tags){
 				for(Tags tag:tags){
-					Tags tmpTags = mapper.findTag(tag.getTagName());
+					tmpTags = mapper.findTag(tag.getTagName());
 					if(tmpTags==null){//新标签
 						if(tag.getTagType()==-1){	//如果不是关键字标签,处理父子关系
 							tag.setParentTag(-1);
@@ -51,16 +51,7 @@ public class MysqlPipeLine implements Pipeline{
 						mapper.addTags(tag);
 						if(tag.getTagType()==0){	//默认传入第一条是父标签,如果是父标签,则余下非关键字标签父id设为第一个标签插入后返回的id
 							parentId = tag.getTid();
-						}
-						Map<String, Integer> map = new HashMap<String, Integer>();	//插入新闻和tag的关系
-						map.put("tid", tag.getTid());
-						map.put("nid", news.getId());
-						mapper.addT2N(map);	
-					}else{		//已存标签
-						Map<String, Integer> map = new HashMap<String, Integer>();	//插入新闻和tag的关系
-						map.put("tid", tmpTags.getTid());
-						map.put("nid", news.getId());
-						mapper.addT2N(map);	
+						}	
 					}
 				}
 			}
@@ -69,6 +60,15 @@ public class MysqlPipeLine implements Pipeline{
 		} catch (MySQLDataException e) {
 			e.printStackTrace();
 		}
+		Map<String, Integer> map = new HashMap<String, Integer>();	//插入新闻和tag的关系
+		map.put("tid", tmpTags.getTid());
+		map.put("nid", news.getId());
+		try {
+			mapper.addT2N(map);
+		} catch (MySQLDataException e) {
+			System.err.println("新建标签失败");
+		}	
+
 	}
 	
 	private News genNews(ResultItems resultItems){

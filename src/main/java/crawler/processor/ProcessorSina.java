@@ -37,7 +37,12 @@ public class ProcessorSina implements Processor{
 		String strDate  = sdf.format(new Date());
 		String reg = "http://\\w+\\.sina\\.com\\.cn/(\\w+/)+"+strDate+"/doc-\\w+.shtml";
 		if(page.getUrl().toString().equals(INIT_URL)){
-			initProcessor(page);
+			try {
+				initProcessor(page);
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}else if(page.getUrl().regex(reg).match()){
 			contentProcessor(page);
 		}else{
@@ -50,13 +55,27 @@ public class ProcessorSina implements Processor{
 		spider.addRequest(new Request(INIT_URL).putExtra("_charset", "gb2312"));
 	}
 	
-	public void initProcessor(Page page){
+	public void initProcessor(Page page) throws ParseException{
 		List<String> links = new JsonPathSelector("$.list[*].url").selectList(page.getRawText().substring(page.getRawText().indexOf("{")));
 		List<String> tags = new JsonPathSelector("$.list[*].channel.title").selectList(page.getRawText().substring(page.getRawText().indexOf("{")));
 		List<String> titles = new JsonPathSelector("$.list[*].title").selectList(page.getRawText().substring(page.getRawText().indexOf("{")));
 		List<String> times = new JsonPathSelector("$.list[*].time").selectList(page.getRawText().substring(page.getRawText().indexOf("{")));
+		SimpleDateFormat format =  new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		Date today = new Date();
+		String todayStr = format.format(today);
+		today = format.parse(todayStr.substring(0, 10)+" 00:00:00");
 		for(int i=0;i<links.size();i++){
-			page.addTargetRequest(new Request(links.get(i)).putExtra("title", titles.get(i)).putExtra("tag", tags.get(i)).putExtra("time", times.get(i)));
+			
+			String d = format.format(Long.parseLong((String) times.get(i)+"000")); 
+			Date newsTime = new Date();
+			try {
+				newsTime = format.parse(d);
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} 
+			if(today.after(newsTime)) continue;
+			page.addTargetRequest(new Request(links.get(i)).putExtra("title", titles.get(i)).putExtra("tag", tags.get(i)).putExtra("time", newsTime));
 		}
 	}
 	
@@ -67,16 +86,8 @@ public class ProcessorSina implements Processor{
 		page.putField("content",page.getHtml().smartContent());
 		page.putField("link",page.getUrl().toString());
 		
-		SimpleDateFormat format =  new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		String d = format.format(Long.parseLong((String) page.getRequest().getExtra("time")+"000")); 
-		Date newsTime = new Date();
-		try {
-			newsTime = format.parse(d);
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}  
-		page.putField("newsTime", newsTime);
+ 
+		page.putField("newsTime", (Date)page.getRequest().getExtra("time"));
 		
 		List<Tags> tags = new ArrayList<Tags>();	//tags存放所有标签
 //		String[] tmptag = page.getHtml().css(".path").xpath("/text()").toString().trim().split(">");

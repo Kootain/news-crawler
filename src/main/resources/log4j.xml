@@ -9,7 +9,7 @@
     </appender>
 
     <logger name="org.springframework" additivity="false">
-        <level value="warn" />
+        <level value="DEBUG" />
         <appender-ref ref="stdout" />
     </logger>
 
@@ -17,9 +17,19 @@
         <level value="warn" />
         <appender-ref ref="stdout" />
     </logger>
+    
 
+    <logger name="org.springframework.beans.factory" additivity="false">
+        <level value="DEBUG" />
+        <appender-ref ref="stdout" />
+    </logger>
+    <logger name="org.mybatis.spring.mapper.MapperScannerConfigurer" additivity="false">
+        <level value="DEBUG" />
+        <appender-ref ref="stdout" />
+    </logger>
+   
     <root>
-        <level value="info" />
+        <level value="INFO" />
         <appender-ref ref="stdout" />
     </root>
 

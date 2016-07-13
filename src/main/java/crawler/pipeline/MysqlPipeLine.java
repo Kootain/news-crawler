@@ -8,6 +8,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.dao.DuplicateKeyException;
@@ -22,14 +25,12 @@ import crawler.dao.NewsDao;
 import crawler.model.News;
 import crawler.model.Tags;
 
-@Component("JobInfoDaoPipeline")
+@Component("MysqlPipeLine")
 public class MysqlPipeLine implements Pipeline{
-	private static ApplicationContext ctx;  
-	static{  
-		ctx = new ClassPathXmlApplicationContext("config/applicationContext.xml");  
-	}        
-	private NewsDao mapper = (NewsDao)ctx.getBean("newsMapper");
 	
+	@Autowired
+	private NewsDao newsDao;
+
 	@Override
 	public void process(ResultItems resultItems, Task task){
 //		News news = (News)resultItems.get("itemObject");
@@ -38,17 +39,17 @@ public class MysqlPipeLine implements Pipeline{
 		int parentId = 0;
 		Tags tmpTags = null;
 		try {
-			mapper.addNews(news);
+			newsDao.addNews(news);
 			if(null!=tags){
 				for(Tags tag:tags){
-					tmpTags = mapper.findTag(tag.getTagName());
+					tmpTags = newsDao.findTag(tag.getTagName());
 					if(tmpTags==null){//新标签
 						if(tag.getTagType()==-1){	//如果不是关键字标签,处理父子关系
 							tag.setParentTag(-1);
 						}else{
 							tag.setParentTag(parentId);
 						}
-						mapper.addTags(tag);
+						newsDao.addTags(tag);
 						if(tag.getTagType()==0){	//默认传入第一条是父标签,如果是父标签,则余下非关键字标签父id设为第一个标签插入后返回的id
 							parentId = tag.getTid();
 						}	
@@ -64,7 +65,7 @@ public class MysqlPipeLine implements Pipeline{
 		map.put("tid", tmpTags.getTid());
 		map.put("nid", news.getId());
 		try {
-			mapper.addT2N(map);
+			newsDao.addT2N(map);
 		} catch (MySQLDataException e) {
 			System.err.println("新建标签失败");
 		}	

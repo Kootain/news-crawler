@@ -1,9 +1,12 @@
-package crawler;
+package crawler.processor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Component;
 
 import crawler.downloader.CharsetConfigDownloader;
@@ -25,13 +28,16 @@ public class ProcessorCenter implements PageProcessor {
 	private static String INIT_METHOD_NAME = "init";
 	
 	private static String[] SOURCE_LIST = {	
-//											"Qq",
-//											"163",
-//											"Sina",
+											"Qq",
+											"163",
+											"Sina",
 											"Sohu"
 											};
 	
 	private Map<String, Object> processorInstance= new HashMap<String, Object>();
+	
+	@Autowired
+	private MysqlPipeLine mysqlPipeLine;
 	
 	ProcessorCenter(){
 		for(String source:SOURCE_LIST){
@@ -60,7 +66,7 @@ public class ProcessorCenter implements PageProcessor {
     
     private void crawel(){
     	Spider spider = Spider.create(new ProcessorCenter())
-    						  .addPipeline(new MysqlPipeLine())
+    						  .addPipeline(mysqlPipeLine)
     						  .addPipeline(new ConsolePipeline())
     						  .setDownloader(new CharsetConfigDownloader())
     						  .thread(5);
@@ -100,7 +106,8 @@ public class ProcessorCenter implements PageProcessor {
     }
 
     public static void main(String[] args) {
-    	ProcessorCenter pc = new ProcessorCenter();
+    	ApplicationContext ctx = new ClassPathXmlApplicationContext("config/applicationContext*.xml");  
+    	final ProcessorCenter pc = ctx.getBean(ProcessorCenter.class);
     	pc.crawel();
     }
     

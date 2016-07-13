@@ -12,27 +12,8 @@
             http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd"  
             default-autowire="byName" default-lazy-init="false"> 
     
-  <!--本示例采用DBCP连接池，应预先把DBCP的jar包复制到工程的lib目录下。 --> 
- 
-  <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"> 
-     <property name="driverClassName" value="com.mysql.jdbc.Driver"/> 
-     <property name="url" value="jdbc:mysql://127.0.0.1:3306/news_crawler?characterEncoding=utf8"/> 
-     <property name="username" value="root"/> 
-     <property name="password" value="root"/> 
-  </bean> 
- 
-  <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean"> 
-     <!--dataSource属性指定要用到的连接池--> 
-     <property name="dataSource" ref="dataSource"/> 
-     <!--configLocation属性指定mybatis的核心配置文件--> 
-     <property name="configLocation" value="config/Mybatis.xml"/> 
-  </bean> 
-  
-  <bean id="newsMapper" class="org.mybatis.spring.mapper.MapperFactoryBean"> 
-     <!--sqlSessionFactory属性指定要用到的SqlSessionFactory实例--> 
-     <property name="sqlSessionFactory" ref="sqlSessionFactory" /> 
-     <!--mapperInterface属性指定映射器接口，用于实现此接口并生成映射器对象--> 
-     <property name="mapperInterface" value="crawler.dao.NewsDao" /> 
-  </bean> 
+  <context:annotation-config/>
+
+   <context:component-scan base-package="crawler.*"/>
  
 </beans> 

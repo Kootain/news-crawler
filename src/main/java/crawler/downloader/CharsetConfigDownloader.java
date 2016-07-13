@@ -4,11 +4,16 @@
 package crawler.downloader;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
 
+
+
+import org.apache.commons.io.IOUtils;
+import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -24,6 +29,7 @@ import us.codecraft.webmagic.Site;
 import us.codecraft.webmagic.Task;
 import us.codecraft.webmagic.downloader.HttpClientDownloader;
 import us.codecraft.webmagic.downloader.HttpClientGenerator;
+import us.codecraft.webmagic.selector.PlainText;
 
 /**
  *************************
@@ -114,6 +120,25 @@ public class CharsetConfigDownloader extends HttpClientDownloader {
             } catch (IOException e) {
                 logger.warn("close response fail", e);
             }
+        }
+    }
+	
+	
+	
+	@Override
+	protected String getContent(String charset, HttpResponse httpResponse) throws IOException {
+        if (charset == null) {
+            byte[] contentBytes = IOUtils.toByteArray(httpResponse.getEntity().getContent());
+            String htmlCharset = getHtmlCharset(httpResponse, contentBytes);
+            if (htmlCharset != null) {
+                return new String(contentBytes, htmlCharset);
+            } else {
+                logger.warn("Charset autodetect failed, use {} as charset. Please specify charset in Site.setCharset()", Charset.defaultCharset());
+                return new String(contentBytes);
+            }
+        } else { 
+            String contentStr = IOUtils.toString(httpResponse.getEntity().getContent(), charset);
+            return new String(contentStr.getBytes(charset),"utf-8");
         }
     }
 }

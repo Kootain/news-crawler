@@ -25,9 +25,10 @@ public class ProcessorCenter implements PageProcessor {
 	private static String INIT_METHOD_NAME = "init";
 	
 	private static String[] SOURCE_LIST = {	
-											"Qq",
-											"163",
-											"Sina",
+//											"Qq",
+//											"163",
+//											"Sina",
+											"Sohu"
 											};
 	
 	private Map<String, Object> processorInstance= new HashMap<String, Object>();

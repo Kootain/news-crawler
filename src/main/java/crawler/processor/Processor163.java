@@ -29,7 +29,7 @@ public class Processor163 implements Processor{
 		spider.addRequest(new Request(INIT_URL).putExtra("_charset", "gb2312"));
 	}
 	
-	private static void initProcessor(Page page) {
+	private void initProcessor(Page page) {
 		List<String> linkList = new JsonPathSelector("$.news[*]").selectList(page.getRawText().substring(page.getRawText().indexOf("{")));
 		List<String> tags = new JsonPathSelector("$.category[*].n").selectList(page.getRawText().substring(page.getRawText().indexOf("{")));
 		for(int i = 0;i< linkList.size();i++){
@@ -69,7 +69,7 @@ public class Processor163 implements Processor{
 		return newsTime;
 	}
 	
-	private static void contentProcessor(Page page) {				
+	private void contentProcessor(Page page) {				
 		page.putField("title",page.getRequest().getExtra("title").toString());
 		page.putField("subtitle","");
 		page.putField("content",page.getHtml().smartContent());

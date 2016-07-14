@@ -1,5 +1,6 @@
 package crawler.processor;
 
+import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -33,12 +34,18 @@ public class ProcessorSohu implements Processor{
 	}
 	
 	private void initProcessor(Page page) {
-		List<String> tags = new JsonPathSelector("$.category[*]").selectList(page.getRawText().substring(page.getRawText().indexOf("{")));
+		String htmlCode = new String();
+		try {
+			htmlCode = new String((page.getRawText().substring(page.getRawText().indexOf("{"))).getBytes("ISO-8859-1"),"utf-8");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		List<String> tags = new JsonPathSelector("$.category[*]").selectList(htmlCode);
 		Map<Integer,String> map = new HashMap<Integer, String>();
 		for(int i = 0;i < tags.size();i++){
 			map.put(i,new JsonPathSelector("$.[*]").selectList(tags.get(i)).get(0));
 		}
-		List<String> linkList = new JsonPathSelector("$.item[*]").selectList(page.getRawText().substring(page.getRawText().indexOf("{")));
+		List<String> linkList = new JsonPathSelector("$.item[*]").selectList(htmlCode);
 		for(String link : linkList){
 			String url = new JsonPathSelector("$.[*]").selectList(link).get(2);
 			url = StringEscapeUtils.unescapeJava(url);

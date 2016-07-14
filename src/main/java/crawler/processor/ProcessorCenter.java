@@ -1,11 +1,7 @@
 package crawler.processor;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Map;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Component;
@@ -22,11 +18,7 @@ import us.codecraft.webmagic.processor.PageProcessor;
 @Component
 public class ProcessorCenter implements PageProcessor {
 
-	private static String CLASS_BASE = "crawler.processor.";
-	
-	private static String PROCESSOR_METHOD_NAME = "processor";
-	
-	private static String INIT_METHOD_NAME = "init";
+	static ApplicationContext ctx = new ClassPathXmlApplicationContext("classpath*:applicationContext*.xml");
 	
 	private static String[] SOURCE_LIST = {	
 											"Qq",
@@ -35,106 +27,40 @@ public class ProcessorCenter implements PageProcessor {
 											"Sohu"
 											};
 	
-	private Map<String, Object> processorInstance= new HashMap<String, Object>();
-	
 	@Autowired
 	private MysqlPipeLine mysqlPipeLine;
 	
-	ProcessorCenter(){
-		for(String source:SOURCE_LIST){
-			Class<?> clazz;
-			try {
-				clazz = Class.forName(processorName(source));
-				this.processorInstance.put(source, clazz.newInstance());
-				System.err.println(source);
-			} catch (ClassNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (InstantiationException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IllegalAccessException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-		}
-   
-	}
 	
     public Site site = Site.me()//.setHttpProxy(new HttpHost("127.0.0.1",8888))
             .setRetryTimes(3).setSleepTime(1000).setUseGzip(true);
     
-    private void crawel(){
+    public void crawel(){
     	Spider spider = Spider.create(new ProcessorCenter())
     						  .addPipeline(mysqlPipeLine)
-    						  .addPipeline(new ConsolePipeline())
+//    						  .addPipeline(new ConsolePipeline())
     						  .setDownloader(new CharsetConfigDownloader())
     						  .thread(5);
     	
 
-        for(String source:SOURCE_LIST){
-        	try {
-				Class<?> clazz = Class.forName(processorName(source));
-				processorInstance.put(source, clazz.newInstance());
-				Class<?>[] argsType = new Class[1];
-				Object[] args = new Object[1];
-	    		argsType[0] = spider.getClass();
-	    		args[0] = spider;
-	    		Method method = clazz.getMethod(INIT_METHOD_NAME, argsType);
-	    		method.invoke(processorInstance.get(source), args);
-			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
-			} catch (NoSuchMethodException e) {
-				e.printStackTrace();
-			} catch (SecurityException e) {
-				e.printStackTrace();
-			} catch (IllegalAccessException e) {
-				e.printStackTrace();
-			} catch (IllegalArgumentException e) {
-				e.printStackTrace();
-			} catch (InvocationTargetException e) {
-				e.printStackTrace();
-			} catch (InstantiationException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} finally{
-				
-			}
+        for(String source:SOURCE_LIST){	//调用个网站processor初始化函数
+			Processor processor = (Processor) ctx.getBean(source);
+			processor.init(spider);
         }
         spider.run();
         spider.close();
     }
 
     public static void main(String[] args) {
-    	ApplicationContext ctx = new ClassPathXmlApplicationContext("classpath*:applicationContext*.xml");  
     	final ProcessorCenter pc = ctx.getBean(ProcessorCenter.class);
     	pc.crawel();
     }
     
     @Override
     public void process(Page page) {
-    	String webtype = getSourceFromPage(page);
-    	page.putField("resource", webtype);
-    	try {
-    		Class<?> clazz = processorInstance.get(webtype).getClass();
-    		Class<?>[] argsType = new Class[1];
-    		Object[] args = new Object[1];
-    		argsType[0] = page.getClass();
-    		args[0] = page;
-    		Method method = clazz.getMethod(PROCESSOR_METHOD_NAME, argsType);
-    		method.invoke(processorInstance.get(webtype), args);
-    	} catch (NoSuchMethodException e) {
-			e.printStackTrace();
-		} catch (SecurityException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			e.printStackTrace();
-		}
+    	String source = getSourceFromPage(page);
+    	page.putField("resource", source);
+    	Processor processor = (Processor) ctx.getBean(source);
+    	processor.processor(page);
     }
 
     @Override
@@ -148,23 +74,6 @@ public class ProcessorCenter implements PageProcessor {
     		type = type.substring(0,1).toUpperCase() + type.toLowerCase().substring(1);
     	}
     	return type;
-    }
-    
-    /**
-     * Return the processor class name with package name,
-     * for reflect the processor class
-     * @param page
-     * @return
-     */
-    private String processorName(Page page){
-    	String type = getSourceFromPage(page);
-    	page.putField("resource", type);
-    	return CLASS_BASE+"Processor"+type;
-    }
-    
-    
-    private String processorName(String type){
-    	return CLASS_BASE+"Processor"+type;
     }
     
 }

@@ -6,7 +6,7 @@
 
     <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
         <property name="dataSource" ref="dataSource" />
-        <property name="configLocation" value="classpath:config/Mybatis.xml"/> 
+        <property name="configLocation" value="classpath:Mybatis.xml"/> 
         <property name="mapperLocations" value="classpath*:crawler/model/*.xml"/>
     </bean>
 

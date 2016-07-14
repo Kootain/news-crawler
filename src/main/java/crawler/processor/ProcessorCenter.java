@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Component;
@@ -106,7 +107,7 @@ public class ProcessorCenter implements PageProcessor {
     }
 
     public static void main(String[] args) {
-    	ApplicationContext ctx = new ClassPathXmlApplicationContext("config/applicationContext*.xml");  
+    	ApplicationContext ctx = new ClassPathXmlApplicationContext("classpath*:applicationContext*.xml");  
     	final ProcessorCenter pc = ctx.getBean(ProcessorCenter.class);
     	pc.crawel();
     }

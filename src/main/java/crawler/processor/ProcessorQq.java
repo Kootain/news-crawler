@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.stereotype.Component;
+
 import crawler.model.News;
 import crawler.model.Tags;
 import us.codecraft.webmagic.Page;
@@ -24,6 +26,7 @@ import us.codecraft.webmagic.selector.Selectable;
  * @creation 2016年7月8日
  *
  */
+@Component("Qq")
 public class ProcessorQq implements Processor {
 	
 	private static String INIT_URL_TPL = "http://roll.news.qq.com/interface/roll.php?date=%s&page=%d&mode=1";
@@ -69,6 +72,7 @@ public class ProcessorQq implements Processor {
 		}else{
 			//TODO : List页解析错误
 		}
+		page.setSkip(true);
 	}
 	
 	private void contentProcessor(Page page){

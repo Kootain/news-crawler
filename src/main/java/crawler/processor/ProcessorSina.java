@@ -7,12 +7,14 @@ package crawler.processor;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-
 import java.util.Date;
 import java.util.List;
 
 
 
+
+
+import org.springframework.stereotype.Component;
 
 import crawler.model.Tags;
 import us.codecraft.webmagic.Page;
@@ -28,6 +30,7 @@ import us.codecraft.webmagic.selector.JsonPathSelector;
  * @creation 2016年7月5日
  *
  */
+@Component("Sina")
 public class ProcessorSina implements Processor{
 	
 	private static String INIT_URL = "http://roll.news.sina.com.cn/interface/rollnews_ch_out_interface.php?col=89&offset_num=0&num=3000&page=1";
@@ -77,6 +80,7 @@ public class ProcessorSina implements Processor{
 			if(today.after(newsTime)) continue;
 			page.addTargetRequest(new Request(links.get(i)).putExtra("title", titles.get(i)).putExtra("tag", tags.get(i)).putExtra("time", newsTime));
 		}
+		page.setSkip(true);
 	}
 	
 	
@@ -93,10 +97,6 @@ public class ProcessorSina implements Processor{
 //		String[] tmptag = page.getHtml().css(".path").xpath("/text()").toString().trim().split(">");
 		Tags tmpTags = new Tags(page.getRequest().getExtra("tag").toString(),0);		//父标签第二个参数0
 		tags.add(tmpTags);	
-//		tmpTags = new Tags("测试子tag",1);				//子标签第二个参数1
-//		tags.add(tmpTags);
-//		tmpTags = new Tags("测试关键字",-1);			//关键字类标签第二个参数 -1
-//		tags.add(tmpTags);
 		page.putField("tags", tags);
 	}
 }

@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.springframework.stereotype.Component;
 
 import crawler.model.Tags;
 import us.codecraft.webmagic.Page;
@@ -17,6 +18,7 @@ import us.codecraft.webmagic.Request;
 import us.codecraft.webmagic.Spider;
 import us.codecraft.webmagic.selector.JsonPathSelector;
 
+@Component("Sohu")
 public class ProcessorSohu implements Processor{
 	static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 	private static String INIT_URL = "http://news.sohu.com/_scroll_newslist/" + sdf.format(new Date()).substring(0,10).replace("-","") + "/news.inc";
@@ -56,6 +58,7 @@ public class ProcessorSohu implements Processor{
 			String tag = map.get(tagNum);
 			page.addTargetRequest(new Request(url).putExtra("title", title).putExtra("time", strToDate(time)).putExtra("tag", tag));
 		}
+		page.setSkip(true);
 	}
 	
 	private void contentProcessor(Page page) {

@@ -8,12 +8,16 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import org.springframework.stereotype.Component;
+
 import crawler.model.Tags;
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Request;
 import us.codecraft.webmagic.Spider;
 import us.codecraft.webmagic.selector.JsonPathSelector;
 
+@Component("163")
 public class Processor163 implements Processor{
 	private static String INIT_URL = "http://news.163.com/special/0001220O/news_json.js";
 	static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");	
@@ -42,6 +46,7 @@ public class Processor163 implements Processor{
 					page.addTargetRequest(new Request(link.get(j)).putExtra("title", title.get(j)).putExtra("time", strToDate(time.get(j))).putExtra("tag", tag));
 			}
 		}
+		page.setSkip(true);
 	}
 	
 	private static Date today(){

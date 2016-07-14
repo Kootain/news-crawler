@@ -7,20 +7,20 @@
             <param name="ConversionPattern" value="%d{yy-MM-dd HH:mm:ss,SSS} %-5p %c(%F:%L) ## %m%n" />
         </layout>
     </appender>
+    
+     <logger name="crawler.pipeline.MysqlPipeLine" additivity="false">
+        <level value="DEBUG" />
+        <appender-ref ref="stdout" />
+    </logger>
 
     <logger name="org.springframework" additivity="false">
-        <level value="DEBUG" />
+        <level value="ERROR" />
         <appender-ref ref="stdout" />
     </logger>
 
-    <logger name="net.sf.ehcache" additivity="false">
-        <level value="warn" />
-        <appender-ref ref="stdout" />
-    </logger>
-    
-
+   
     <logger name="org.springframework.beans.factory" additivity="false">
-        <level value="DEBUG" />
+        <level value="ERROR" />
         <appender-ref ref="stdout" />
     </logger>
     <logger name="org.mybatis.spring.mapper.MapperScannerConfigurer" additivity="false">
@@ -29,7 +29,7 @@
     </logger>
    
     <root>
-        <level value="INFO" />
+        <level value="ERROR" />
         <appender-ref ref="stdout" />
     </root>
 

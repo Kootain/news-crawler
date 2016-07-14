@@ -12,6 +12,7 @@ import javax.annotation.Resource;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Scope;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Component;
@@ -26,6 +27,7 @@ import crawler.model.News;
 import crawler.model.Tags;
 
 @Component("MysqlPipeLine")
+@Scope("prototype")
 public class MysqlPipeLine implements Pipeline{
 	
 	@Autowired

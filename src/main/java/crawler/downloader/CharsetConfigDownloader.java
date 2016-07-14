@@ -138,7 +138,7 @@ public class CharsetConfigDownloader extends HttpClientDownloader {
             }
         } else { 
             String contentStr = IOUtils.toString(httpResponse.getEntity().getContent(), charset);
-            return new String(contentStr.getBytes(charset),"utf-8");
+            return contentStr;	//new String(contentStr.getBytes(charset),"utf-8");
         }
     }
 }

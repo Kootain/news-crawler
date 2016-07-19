@@ -122,7 +122,7 @@
             <resource>META-INF/spring.tooling</resource>  
           </transformer>  
         </transformers>  
-        <outputDirectory>${basedir}/deploy</outputDirectory> 
+        <outputDirectory>${basedir}</outputDirectory> 
         </configuration>  
     </execution>  
   </executions>  

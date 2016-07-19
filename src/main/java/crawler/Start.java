@@ -9,7 +9,7 @@ import crawler.processor.ProcessorCenter;
 
 public class Start {
 	
-	private final static String RES_DIR="file:"+System.getProperty("user.dir")+"/config/";
+	private final static String RES_DIR="file:"+System.getProperty("user.dir")+"/../src/main/resources/";
 	
 	private final static String[] CTX_STR_DEV={"classpath:applicationContext.xml","classpath:applicationContext-Mybatis.xml"};
 	

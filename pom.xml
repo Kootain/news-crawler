@@ -107,7 +107,7 @@
       <configuration>  
         <finalName>news-crawler</finalName>  
         <shadedArtifactAttached>true</shadedArtifactAttached>  
-        <shadedClassifierName>jar-with-dependencies</shadedClassifierName>  
+        <shadedClassifierName></shadedClassifierName>  
         <transformers>  
           <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">  
             <mainClass>crawler.Start</mainClass>  
@@ -122,6 +122,7 @@
             <resource>META-INF/spring.tooling</resource>  
           </transformer>  
         </transformers>  
+        <outputDirectory>${basedir}/deploy</outputDirectory> 
         </configuration>  
     </execution>  
   </executions>  

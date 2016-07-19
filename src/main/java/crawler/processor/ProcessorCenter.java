@@ -13,7 +13,6 @@ import crawler.pipeline.MysqlPipeLine;
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Site;
 import us.codecraft.webmagic.Spider;
-import us.codecraft.webmagic.pipeline.ConsolePipeline;
 import us.codecraft.webmagic.processor.PageProcessor;
 
 
@@ -32,16 +31,19 @@ public class ProcessorCenter implements PageProcessor,ApplicationContextAware {
 	@Autowired
 	private MysqlPipeLine mysqlPipeLine;
 	
+	private Spider spider;
+	
 	
     public Site site = Site.me()//.setHttpProxy(new HttpHost("127.0.0.1",8888))
             .setRetryTimes(3).setSleepTime(1000).setUseGzip(true);
     
     public void crawel(){
-    	Spider spider = Spider.create(new ProcessorCenter())
-    						  .addPipeline(mysqlPipeLine)
-//    						  .addPipeline(new ConsolePipeline())
-    						  .setDownloader(new CharsetConfigDownloader())
-    						  .thread(5);
+    	if(spider==null){
+	    	spider = Spider.create(new ProcessorCenter())
+	    						  .addPipeline(mysqlPipeLine)
+	    						  .setDownloader(new CharsetConfigDownloader())
+	    						  .thread(5);
+    	}
     	
 
         for(String source:SOURCE_LIST){	//调用个网站processor初始化函数

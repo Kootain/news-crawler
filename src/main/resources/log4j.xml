@@ -27,6 +27,16 @@
         <level value="DEBUG" />
         <appender-ref ref="stdout" />
     </logger>
+    
+    <logger name="crawler.Start" additivity="false">
+        <level value="ALL" />
+        <appender-ref ref="stdout" />
+    </logger>
+    
+    <logger name="crawler.processor" additivity="false">
+        <level value="ALL" />
+        <appender-ref ref="stdout" />
+    </logger>
    
     <root>
         <level value="ERROR" />

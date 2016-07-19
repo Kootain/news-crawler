@@ -1,6 +1,7 @@
 package crawler.processor;
 
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -21,6 +22,8 @@ public class ProcessorCenter implements PageProcessor,ApplicationContextAware {
 
 	static ApplicationContext ctx;
 	
+	private Logger logger = LoggerFactory.getLogger(getClass());
+	
 	private static String[] SOURCE_LIST = {	
 											"Qq",
 											"163",
@@ -37,12 +40,15 @@ public class ProcessorCenter implements PageProcessor,ApplicationContextAware {
     public Site site = Site.me()//.setHttpProxy(new HttpHost("127.0.0.1",8888))
             .setRetryTimes(3).setSleepTime(1000).setUseGzip(true);
     
-    public void crawel(){
+    public void crawel() throws IllegalStateException{
     	if(spider==null){
+    		logger.info("初始化爬虫！");
 	    	spider = Spider.create(new ProcessorCenter())
 	    						  .addPipeline(mysqlPipeLine)
 	    						  .setDownloader(new CharsetConfigDownloader())
 	    						  .thread(5);
+    	}else{
+    		logger.info("爬虫已初始化！");
     	}
     	
 

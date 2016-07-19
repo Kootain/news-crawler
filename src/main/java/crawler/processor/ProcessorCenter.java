@@ -1,8 +1,10 @@
 package crawler.processor;
 
 
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Component;
 
@@ -16,9 +18,9 @@ import us.codecraft.webmagic.processor.PageProcessor;
 
 
 @Component
-public class ProcessorCenter implements PageProcessor {
+public class ProcessorCenter implements PageProcessor,ApplicationContextAware {
 
-	static ApplicationContext ctx = new ClassPathXmlApplicationContext("classpath*:applicationContext*.xml");
+	static ApplicationContext ctx;
 	
 	private static String[] SOURCE_LIST = {	
 											"Qq",
@@ -51,6 +53,7 @@ public class ProcessorCenter implements PageProcessor {
     }
 
     public static void main(String[] args) {
+    	ApplicationContext ctx = new ClassPathXmlApplicationContext("classpath*:applicationContext*.xml");
     	final ProcessorCenter pc = ctx.getBean(ProcessorCenter.class);
     	pc.crawel();
     }
@@ -75,5 +78,11 @@ public class ProcessorCenter implements PageProcessor {
     	}
     	return type;
     }
+
+	@Override
+	public void setApplicationContext(ApplicationContext arg0)
+			throws BeansException {
+		this.ctx = arg0;
+	}
     
 }

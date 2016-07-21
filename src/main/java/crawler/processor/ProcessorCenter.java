@@ -24,13 +24,6 @@ public class ProcessorCenter implements PageProcessor,ApplicationContextAware {
 	
 	private Logger logger = LoggerFactory.getLogger(getClass());
 	
-	private static String[] SOURCE_LIST = {	
-											"Qq",
-											"163",
-											"Sina",
-											"Sohu"
-											};
-	
 	@Autowired
 	private MysqlPipeLine mysqlPipeLine;
 	
@@ -50,9 +43,8 @@ public class ProcessorCenter implements PageProcessor,ApplicationContextAware {
     	}else{
     		logger.info("爬虫已初始化！");
     	}
-    	
-
-        for(String source:SOURCE_LIST){	//调用个网站processor初始化函数
+    	String[] sourceList = ((String) ctx.getBean("source")).split(",");
+        for(String source:sourceList){	//调用个网站processor初始化函数
 			Processor processor = (Processor) ctx.getBean(source);
 			processor.init(spider);
         }

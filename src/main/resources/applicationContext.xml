@@ -12,12 +12,20 @@
             http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd"  
             default-autowire="byName" default-lazy-init="false"> 
     
-  <context:annotation-config/>
+  	<context:annotation-config/>
 
    <context:component-scan base-package="crawler.*"/>
    
+	<!-- 定义爬取网站域名列表 -->
+  	<bean id="source" class="java.lang.String">
+  		<constructor-arg>
+		<value>${source.list}</value>
+		</constructor-arg>
+  	</bean>
+
    <bean id="starter" class="crawler.Start" />
    
+   <!-- 定义定时任务 -->
    <bean id="starterJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
  		<property name="targetObject" ref="starter"></property><!-- 指定任务类 -->
  		<property name="targetMethod" value="daily"></property><!-- 指定任务方法 -->

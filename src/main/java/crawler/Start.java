@@ -9,21 +9,14 @@ import org.springframework.context.support.FileSystemXmlApplicationContext;
 import crawler.processor.ProcessorCenter;
 
 public class Start {
-	
-	private final static String RES_DIR="file:"+System.getProperty("user.dir")+"/config/";
-	
-	private final static String[] CTX_STR_DEV={"classpath:applicationContext.xml","classpath:applicationContext-Mybatis.xml"};
-	
-	private final static String[] CTX_STR={RES_DIR+"applicationContext.xml",RES_DIR+"applicationContext-Mybatis.xml"};
-	
-//	private static ApplicationContext ctx = new FileSystemXmlApplicationContext(CTX_STR);
+
 	private static ApplicationContext ctx = new ClassPathXmlApplicationContext("applicationContext-All.xml");
 	
 	private Logger logger = LoggerFactory.getLogger(getClass());
 	
 	public static void main(String[] args) {
     	ProcessorCenter pc = ctx.getBean(ProcessorCenter.class);
-//    	pc.crawel();
+    	pc.crawel();
     }
 	
 	public void daily() {

@@ -35,7 +35,7 @@
  	<bean id="timeTigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
  		<property name="jobDetail" ref="starterJob"></property>
  		<property name="startDelay" value="1000" /><!-- 调度工厂实例化后，经过1秒开始执行调度 -->  
-		<property name="repeatInterval" value="3600000" /><!-- 每x毫秒调度一次 --> 
+		<property name="repeatInterval" value="${schedule.repeatms}" /><!-- 每x毫秒调度一次 --> 
 	</bean> 
 	
 	<!-- 启动定时器 -->

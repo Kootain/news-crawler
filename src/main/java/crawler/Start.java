@@ -15,8 +15,8 @@ public class Start {
 	private Logger logger = LoggerFactory.getLogger(getClass());
 	
 	public static void main(String[] args) {
-    	ProcessorCenter pc = ctx.getBean(ProcessorCenter.class);
-    	pc.crawel();
+//    	ProcessorCenter pc = ctx.getBean(ProcessorCenter.class);
+//    	pc.crawel();
     }
 	
 	public void daily() {

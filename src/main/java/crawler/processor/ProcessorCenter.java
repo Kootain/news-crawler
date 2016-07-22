@@ -47,6 +47,7 @@ public class ProcessorCenter implements PageProcessor,ApplicationContextAware {
         for(String source:sourceList){	//调用个网站processor初始化函数
 			Processor processor = (Processor) ctx.getBean(source);
 			processor.init(spider);
+			logger.info(String.format("载入网站:【%s】配置。",source));
         }
         spider.run();
         spider.close();

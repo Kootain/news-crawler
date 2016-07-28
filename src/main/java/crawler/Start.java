@@ -1,5 +1,6 @@
 package crawler;
 
+import org.apache.log4j.xml.DOMConfigurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -12,11 +13,15 @@ public class Start {
 
 	private static ApplicationContext ctx = new ClassPathXmlApplicationContext("applicationContext-All.xml");
 	
-	private Logger logger = LoggerFactory.getLogger(getClass());
+	private Logger logger;
+	
+	Start(){
+		DOMConfigurator.configure("config/log4j.xml");
+		logger = LoggerFactory.getLogger(getClass());
+	}
 	
 	public static void main(String[] args) {
-//    	ProcessorCenter pc = ctx.getBean(ProcessorCenter.class);
-//    	pc.crawel();
+		
     }
 	
 	public void daily() {

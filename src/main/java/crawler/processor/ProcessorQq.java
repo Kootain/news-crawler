@@ -27,9 +27,15 @@ import us.codecraft.webmagic.selector.Selectable;
  *
  */
 @Component("Qq")
-public class ProcessorQq implements Processor {
+public class ProcessorQq extends Processor {
 	
 	private static String INIT_URL_TPL = "http://roll.news.qq.com/interface/roll.php?date=%s&page=%d&mode=1";
+	
+	private static int INIT_NUM = 10;
+	
+	private int countLoad;
+	
+	private int countUnfinish;
 	
 	public void processor(Page page) {
 		if(page.getUrl().regex("http://roll.news.qq.com/interface/roll.php\\S+").match()){
@@ -41,19 +47,33 @@ public class ProcessorQq implements Processor {
 
 	@Override
 	public void init(Spider spider) {
-		spider.addRequest(new Request(String.format(INIT_URL_TPL, getTodayTimeString(), 1))
-							.putExtra("_referer", "http://roll.news.qq.com/")
-							.putExtra("_charset", "gb2312"));
-
+		countLoad=0;
+		countUnfinish=INIT_NUM;
+		for(int i=1;i<=INIT_NUM;i++){
+			spider.addRequest(new Request(String.format(INIT_URL_TPL, getTodayTimeString(), i))
+								.putExtra("_referer", "http://roll.news.qq.com/")
+								.putExtra("_charset", "gb2312")
+								.setPriority(1));
+		}
 	}
 	
 	public void listProcessor(Page page){
-		int count = Integer.parseInt(page.getJson().jsonPath("$data.count").toString());
-		int np = Integer.parseInt(page.getJson().jsonPath("$data.page").toString());
-		if(count>np){	//载入下一页list页
+		int count = 0;
+		int np = 0;
+		try{
+			count = Integer.parseInt(page.getJson().jsonPath("$data.count").toString());
+			np = Integer.parseInt(page.getJson().jsonPath("$data.page").toString());
+		}catch (Exception e){
+			page.setSkip(true);
+			countUnfinish--;
+			return;
+		}
+		if(count>np&&np>INIT_NUM){	//载入下一页list页
+			countUnfinish++;
 			page.addTargetRequest(new Request(String.format(INIT_URL_TPL, getTodayTimeString(), (np+1)))
 							.putExtra("_referer", "http://roll.news.qq.com/")
-							.putExtra("_charset", "gb2312"));
+							.putExtra("_charset", "gb2312")
+							.setPriority(1));
 		}
 		String jsonString = page.getJson().jsonPath("$data.article_info").toString();
 		Page tmp = new Page();
@@ -63,6 +83,7 @@ public class ProcessorQq implements Processor {
 		List<String> links = tmp.getHtml().$("li").links().all();
 		List<String> titles = tmp.getHtml().$("li a","text").all();
 		if(times.size()==titles.size()&&titles.size()==links.size()){
+			countLoad += links.size();
 			for(int i=0; i<titles.size();i++){
 				page.addTargetRequest(new Request(links.get(i))
 										.putExtra("title", titles.get(i))
@@ -71,6 +92,12 @@ public class ProcessorQq implements Processor {
 			}
 		}else{
 			//TODO : List页解析错误
+		}
+		synchronized(this){
+	    	countUnfinish--;
+	    	if(countUnfinish==0){
+	    		logger.debug(String.format("【%s】%d条记录加入任务队列",getSourceFromPage(page),countLoad));
+	    	}
 		}
 		page.setSkip(true);
 	}

@@ -15,6 +15,7 @@ import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Site;
 import us.codecraft.webmagic.Spider;
 import us.codecraft.webmagic.processor.PageProcessor;
+import us.codecraft.webmagic.scheduler.PriorityScheduler;
 
 
 @Component
@@ -39,6 +40,7 @@ public class ProcessorCenter implements PageProcessor,ApplicationContextAware {
 	    	spider = Spider.create(new ProcessorCenter())
 	    						  .addPipeline(mysqlPipeLine)
 	    						  .setDownloader(new CharsetConfigDownloader())
+	    						  .setScheduler(ctx.getBean(PriorityScheduler.class))
 	    						  .thread(5);
     	}else{
     		logger.info("爬虫已初始化！");

@@ -7,10 +7,20 @@
             <param name="ConversionPattern" value="%d{yy-MM-dd HH:mm:ss,SSS} %-5p %c(%F:%L) ## %m%n" />
         </layout>
     </appender>
+
+    <appender name="file" class="org.apache.log4j.DailyRollingFileAppender">
+        <param name="File" value="c:/logs/dailyRollingFile.log"></param>
+        <param name="DatePattern" value="'.'yyyy-MM-dd'.log'"></param>
+         <param name="ImmediateFlush" value="true"></param>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d{yy-MM-dd HH:mm:ss,SSS} %-5p %c(%F:%L) ## %m%n" />
+        </layout>
+    </appender>
     
      <logger name="crawler.pipeline.MysqlPipeLine" additivity="false">
         <level value="DEBUG" />
         <appender-ref ref="stdout" />
+        <appender-ref ref="file" />
     </logger>
 
     <logger name="org.springframework" additivity="false">
@@ -25,22 +35,25 @@
     </logger>
     <logger name="org.mybatis.spring.mapper.MapperScannerConfigurer" additivity="false">
         <level value="DEBUG" />
-        <appender-ref ref="stdout" />
+        <appender-ref ref="file" />
     </logger>
     
     <logger name="crawler.Start" additivity="false">
         <level value="ALL" />
         <appender-ref ref="stdout" />
+        <appender-ref ref="file" />
     </logger>
     
     <logger name="crawler.processor" additivity="false">
         <level value="ALL" />
         <appender-ref ref="stdout" />
+        <appender-ref ref="file" />
     </logger>
    
     <root>
         <level value="ERROR" />
         <appender-ref ref="stdout" />
+        <appender-ref ref="file" />
     </root>
 
 </log4j:configuration>

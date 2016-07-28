@@ -14,6 +14,7 @@ import java.util.List;
 
 
 
+
 import org.springframework.stereotype.Component;
 
 import crawler.model.Tags;
@@ -31,7 +32,7 @@ import us.codecraft.webmagic.selector.JsonPathSelector;
  *
  */
 @Component("Sina")
-public class ProcessorSina implements Processor{
+public class ProcessorSina extends Processor{
 	
 	private static String INIT_URL = "http://roll.news.sina.com.cn/interface/rollnews_ch_out_interface.php?col=89&offset_num=0&num=3000&page=1";
 	
@@ -55,7 +56,8 @@ public class ProcessorSina implements Processor{
 	
 	public void init(Spider spider){
 //		spider.addUrl(INIT_URL);
-		spider.addRequest(new Request(INIT_URL).putExtra("_charset", "gb2312"));
+		spider.addRequest(new Request(INIT_URL).putExtra("_charset", "gb2312")
+												.setPriority(1));
 	}
 	
 	public void initProcessor(Page page) throws ParseException{
@@ -67,6 +69,7 @@ public class ProcessorSina implements Processor{
 		Date today = new Date();
 		String todayStr = format.format(today);
 		today = format.parse(todayStr.substring(0, 10)+" 00:00:00");
+		int count = 0;
 		for(int i=0;i<links.size();i++){
 			
 			String d = format.format(Long.parseLong((String) times.get(i)+"000")); 
@@ -79,7 +82,9 @@ public class ProcessorSina implements Processor{
 			} 
 			if(today.after(newsTime)) continue;
 			page.addTargetRequest(new Request(links.get(i)).putExtra("title", titles.get(i)).putExtra("tag", tags.get(i)).putExtra("time", newsTime));
+			count++;
 		}
+		logger.debug(String.format("【%s】%d条记录加入任务队列",getSourceFromPage(page),count));
 		page.setSkip(true);
 	}
 	

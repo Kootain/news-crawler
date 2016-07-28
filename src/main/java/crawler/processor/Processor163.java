@@ -8,7 +8,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
 import org.springframework.stereotype.Component;
 
 import crawler.model.Tags;
@@ -18,7 +17,7 @@ import us.codecraft.webmagic.Spider;
 import us.codecraft.webmagic.selector.JsonPathSelector;
 
 @Component("163")
-public class Processor163 implements Processor{
+public class Processor163 extends Processor{
 	private static String INIT_URL = "http://news.163.com/special/0001220O/news_json.js";
 	static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");	
 	
@@ -30,22 +29,25 @@ public class Processor163 implements Processor{
 	}
 	
 	public void init(Spider spider){
-		spider.addRequest(new Request(INIT_URL).putExtra("_charset", "gb2312"));
+		spider.addRequest(new Request(INIT_URL).putExtra("_charset", "gb2312").setPriority(1));
 	}
 	
 	private void initProcessor(Page page) {
 		List<String> linkList = new JsonPathSelector("$.news[*]").selectList(page.getRawText().substring(page.getRawText().indexOf("{")));
 		List<String> tags = new JsonPathSelector("$.category[*].n").selectList(page.getRawText().substring(page.getRawText().indexOf("{")));
+		int count=0;
 		for(int i = 0;i< linkList.size();i++){
 			List<String> link = new JsonPathSelector("$[*].l").selectList(linkList.get(i));
 			List<String> title = new JsonPathSelector("$[*].t").selectList(linkList.get(i));
 			List<String> time = new JsonPathSelector("$[*].p").selectList(linkList.get(i));
 			String tag = tags.get(i);
+			count+=link.size();
 			for(int j = 0;j< link.size();j++){
 				if(strToDate(time.get(j)).after(today()))
 					page.addTargetRequest(new Request(link.get(j)).putExtra("title", title.get(j)).putExtra("time", strToDate(time.get(j))).putExtra("tag", tag));
 			}
 		}
+		logger.debug(String.format("【%s】%d条记录加入任务队列",getSourceFromPage(page),count));
 		page.setSkip(true);
 	}
 	

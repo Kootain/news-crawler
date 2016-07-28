@@ -25,6 +25,8 @@
 
    <bean id="starter" class="crawler.Start" />
    
+   <bean id="scheduler" class="us.codecraft.webmagic.scheduler.PriorityScheduler" />
+   
    <!-- 定义定时任务 -->
    <bean id="starterJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
  		<property name="targetObject" ref="starter"></property><!-- 指定任务类 -->

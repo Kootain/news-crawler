@@ -48,7 +48,7 @@ public class MysqlPipeLine implements Pipeline{
 		int parentId = 0;
 		try {
 			newsDao.addNews(news);
-			logger.info("插入新闻:"+news.getLink());
+			logger.info(String.format("【%s】插入新闻:%s",news.getResource(),news.getLink()));
 			if(null!=tags){
 				for(int i=0;i<tags.size();i++){
 					Tags tag = tags.get(i);
@@ -70,7 +70,7 @@ public class MysqlPipeLine implements Pipeline{
 				}
 			}
 		} catch (DuplicateKeyException e) {
-			logger.warn("重复数据!");
+			logger.warn(String.format("【%s】重复数据!-%s",news.getResource(),news.getLink()));
 		} catch (MySQLDataException e) {
 			logger.error("新建标签失败!");
 		} finally{

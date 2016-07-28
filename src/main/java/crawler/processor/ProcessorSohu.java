@@ -19,7 +19,7 @@ import us.codecraft.webmagic.Spider;
 import us.codecraft.webmagic.selector.JsonPathSelector;
 
 @Component("Sohu")
-public class ProcessorSohu implements Processor{
+public class ProcessorSohu extends Processor{
 	static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 	private static String INIT_URL = "http://news.sohu.com/_scroll_newslist/" + sdf.format(new Date()).substring(0,10).replace("-","") + "/news.inc";
 	
@@ -32,7 +32,7 @@ public class ProcessorSohu implements Processor{
 	}
 	
 	public void init(Spider spider){
-		spider.addRequest(new Request(INIT_URL).putExtra("_charset", "ISO-8859-1"));
+		spider.addRequest(new Request(INIT_URL).putExtra("_charset", "ISO-8859-1").setPriority(1));
 	}
 	
 	private void initProcessor(Page page) {
@@ -48,6 +48,7 @@ public class ProcessorSohu implements Processor{
 			map.put(i,new JsonPathSelector("$.[*]").selectList(tags.get(i)).get(0));
 		}
 		List<String> linkList = new JsonPathSelector("$.item[*]").selectList(htmlCode);
+		logger.debug(String.format("【%s】%d条记录加入任务队列",getSourceFromPage(page),linkList.size()));
 		for(String link : linkList){
 			String url = new JsonPathSelector("$.[*]").selectList(link).get(2);
 			url = StringEscapeUtils.unescapeJava(url);

@@ -22,7 +22,7 @@ import us.codecraft.webmagic.utils.NumberUtils;
  * @creation 2016年7月30日
  *
  */
-public class PriorityDuplicateSkipScheduler extends DuplicateRemovedScheduler implements MonitorableScheduler{
+public class PriorityDuplicateSkipScheduler extends DuplicatePrioritySchduler implements MonitorableScheduler{
 	public static final int INITIAL_CAPACITY = 5;
 
     private BlockingQueue<Request> noPriorityQueue = new LinkedBlockingQueue<Request>();

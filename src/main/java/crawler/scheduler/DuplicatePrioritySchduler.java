@@ -1,7 +1,7 @@
 /**
  * 
  */
-package scheduler;
+package crawler.scheduler;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,8 +37,9 @@ public abstract class DuplicatePrioritySchduler implements Scheduler{
     @Override
     public void push(Request request, Task task) {
         logger.trace("get a candidate url {}", request.getUrl());
-        if (!duplicatedRemover.isDuplicate(request, task) || shouldReserved(request)) {
-            logger.debug("push to queue {}", request.getUrl());
+        if (!duplicatedRemover.isDuplicate(request, task) || shouldReserved(request) || request.getPriority()==1) {
+            //若priority == 1 则为初始化链接，无条件入队列
+        	logger.debug("push to queue {}", request.getUrl());
             pushWhenNoDuplicate(request, task);
         }
     }

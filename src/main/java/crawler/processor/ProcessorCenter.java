@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import crawler.downloader.CharsetConfigDownloader;
 import crawler.pipeline.MysqlPipeLine;
+import crawler.scheduler.PriorityDuplicateSkipScheduler;
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Site;
 import us.codecraft.webmagic.Spider;
@@ -40,7 +41,7 @@ public class ProcessorCenter implements PageProcessor,ApplicationContextAware {
 	    	spider = Spider.create(new ProcessorCenter())
 	    						  .addPipeline(mysqlPipeLine)
 	    						  .setDownloader(new CharsetConfigDownloader())
-	    						  .setScheduler(ctx.getBean(PriorityScheduler.class))
+	    						  .setScheduler(ctx.getBean(PriorityDuplicateSkipScheduler.class))
 	    						  .thread(5);
     	}else{
     		logger.info("爬虫已初始化！");

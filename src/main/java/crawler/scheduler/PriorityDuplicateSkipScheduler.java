@@ -1,7 +1,7 @@
 /**
  * 
  */
-package scheduler;
+package crawler.scheduler;
 
 import java.util.Comparator;
 import java.util.concurrent.BlockingQueue;

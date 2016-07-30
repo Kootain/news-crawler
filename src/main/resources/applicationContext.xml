@@ -25,7 +25,7 @@
 
    <bean id="starter" class="crawler.Start" />
    
-   <bean id="scheduler" class="us.codecraft.webmagic.scheduler.PriorityScheduler" />
+   <bean id="scheduler" class="crawler.scheduler.PriorityDuplicateSkipScheduler" />
    
    <!-- 定义定时任务 -->
    <bean id="starterJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">

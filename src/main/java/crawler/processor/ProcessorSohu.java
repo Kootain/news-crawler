@@ -20,19 +20,19 @@ import us.codecraft.webmagic.selector.JsonPathSelector;
 
 @Component("Sohu")
 public class ProcessorSohu extends Processor{
-	static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-	private static String INIT_URL = "http://news.sohu.com/_scroll_newslist/" + sdf.format(new Date()).substring(0,10).replace("-","") + "/news.inc";
+	static SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+	private static String INIT_URL = "http://news.sohu.com/_scroll_newslist/%s/news.inc";
 	
 	
 	public void processor(Page page){
-		if(page.getUrl().toString().equals(INIT_URL))
+		if(page.getUrl().toString().equals(String.format(INIT_URL,sdf.format(new Date()))))
 			initProcessor(page);
 		else
 			contentProcessor(page);
 	}
 	
 	public void init(Spider spider){
-		spider.addRequest(new Request(INIT_URL).putExtra("_charset", "ISO-8859-1").setPriority(1));
+		spider.addRequest(new Request(String.format(INIT_URL,sdf.format(new Date()))).putExtra("_charset", "ISO-8859-1").setPriority(1));
 	}
 	
 	private void initProcessor(Page page) {

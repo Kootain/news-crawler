@@ -65,7 +65,12 @@ public class ProcessorQq extends Processor {
 			np = Integer.parseInt(page.getJson().jsonPath("$data.page").toString());
 		}catch (Exception e){
 			page.setSkip(true);
-			countUnfinish--;
+			synchronized(this){
+		    	countUnfinish--;
+		    	if(countUnfinish==0){
+		    		logger.debug(String.format("【%s】%d条记录加入任务队列",getSourceFromPage(page),countLoad));
+		    	}
+			}
 			return;
 		}
 		if(count>np&&np>INIT_NUM){	//载入下一页list页

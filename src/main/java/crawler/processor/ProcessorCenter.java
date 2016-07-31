@@ -16,7 +16,6 @@ import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Site;
 import us.codecraft.webmagic.Spider;
 import us.codecraft.webmagic.processor.PageProcessor;
-import us.codecraft.webmagic.scheduler.PriorityScheduler;
 
 
 @Component
@@ -29,6 +28,8 @@ public class ProcessorCenter implements PageProcessor,ApplicationContextAware {
 	@Autowired
 	private MysqlPipeLine mysqlPipeLine;
 	
+	private PriorityDuplicateSkipScheduler priorityDuplicateSkipScheduler;
+	
 	private Spider spider;
 	
 	
@@ -36,12 +37,15 @@ public class ProcessorCenter implements PageProcessor,ApplicationContextAware {
             .setRetryTimes(3).setSleepTime(1000).setUseGzip(true);
     
     public void crawel() throws IllegalStateException{
-    	if(spider==null){
+    	//if(spider==null){
+    	if(true){	
     		logger.info("初始化爬虫！");
+    		//TODO: 按照每天日期更新scheduler
+    		priorityDuplicateSkipScheduler = new PriorityDuplicateSkipScheduler();
 	    	spider = Spider.create(new ProcessorCenter())
 	    						  .addPipeline(mysqlPipeLine)
 	    						  .setDownloader(new CharsetConfigDownloader())
-	    						  .setScheduler(ctx.getBean(PriorityDuplicateSkipScheduler.class))
+	    						  .setScheduler(priorityDuplicateSkipScheduler)
 	    						  .thread(5);
     	}else{
     		logger.info("爬虫已初始化！");

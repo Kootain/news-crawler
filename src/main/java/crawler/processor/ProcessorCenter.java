@@ -9,6 +9,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Component;
 
+import crawler.ApplicationContextHolder;
 import crawler.downloader.CharsetConfigDownloader;
 import crawler.pipeline.MysqlPipeLine;
 import crawler.scheduler.PriorityDuplicateSkipScheduler;
@@ -19,9 +20,9 @@ import us.codecraft.webmagic.processor.PageProcessor;
 
 
 @Component
-public class ProcessorCenter implements PageProcessor,ApplicationContextAware {
+public class ProcessorCenter implements PageProcessor {
 
-	static ApplicationContext ctx;
+	private ApplicationContext ctx = ApplicationContextHolder.getContext();
 	
 	private Logger logger = LoggerFactory.getLogger(getClass());
 	
@@ -86,11 +87,5 @@ public class ProcessorCenter implements PageProcessor,ApplicationContextAware {
     	}
     	return type;
     }
-
-	@Override
-	public void setApplicationContext(ApplicationContext arg0)
-			throws BeansException {
-		this.ctx = arg0;
-	}
     
 }

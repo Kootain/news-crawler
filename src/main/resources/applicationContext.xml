@@ -27,6 +27,8 @@
    
    <bean id="scheduler" class="crawler.scheduler.PriorityDuplicateSkipScheduler" />
    
+   <bean id="holder" class="crawler.ApplicationContextHolder" />
+   
    <!-- 定义定时任务 -->
    <bean id="starterJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
  		<property name="targetObject" ref="starter"></property><!-- 指定任务类 -->
